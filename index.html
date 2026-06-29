@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V.E.L.O. — 오컬트 아이돌 프로듀싱 리듬게임</title>
+  <meta name="description" content="잘못된 선택을 하면, 이야기는 처음으로 되돌아간다. 오컬트 아이돌 프로듀싱 리듬게임 V.E.L.O. 데뷔 전 초기 프로듀서를 모집합니다." />
+  <link rel="icon" type="image/png" href="assets/star.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ================= HEADER ================= -->
+  <header class="hd" id="hd">
+    <div class="hd-inner">
+      <a href="#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
+      <nav class="nav" id="nav">
+        <a href="#hero">홈</a>
+        <a href="#notice">공지</a>
+        <a href="#members">멤버</a>
+        <a href="#story">세계관</a>
+        <a href="#fan">팬존</a>
+        <a href="#club">프로듀서 클럽</a>
+        <a href="#notice">테스트 신청</a>
+      </nav>
+      <a href="#club" class="btn btn-primary hd-cta">참여하기 <span class="btn-star">✦</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO ================= -->
+    <section id="hero" class="hero">
+      <div class="hero-bg">
+        <span class="hero-arch"></span>
+        <span class="hero-glow g1"></span>
+        <span class="hero-glow g2"></span>
+        <div class="petals" data-petals="18"></div>
+        <div class="sparkles" data-sparkles="22"></div>
+      </div>
+
+      <div class="hero-wrap">
+        <div class="hero-copy">
+          <h1 class="hero-logo">V.E.L.O.</h1>
+          <p class="hero-core">잘못된 선택을 하면,<br><em>이야기는 처음으로 되돌아간다.</em></p>
+          <p class="hero-sub"><img src="assets/star.png" alt="" class="sub-star">오컬트 아이돌 프로듀싱 리듬게임</p>
+          <div class="hero-cta">
+            <a href="#club" class="btn btn-primary">초기 프로듀서 참여하기 <span class="btn-star">✦</span></a>
+            <a href="#notice" class="btn btn-ghost">MVP 테스트 신청하기</a>
+          </div>
+        </div>
+
+        <div class="hero-cast" id="heroCast">
+          <span class="cast-halo"></span>
+          <img class="cast c-seoyun" src="members/seoyun.png" alt="서윤" />
+          <img class="cast c-hana"   src="members/hana.png"   alt="하나" />
+          <img class="cast c-jiwu"   src="members/jiwu.png"   alt="지우" />
+          <img class="cast c-mina"   src="members/mina.png"   alt="미나" />
+          <img class="cast c-ria"    src="members/ria.png"    alt="리아" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NOTICE + VOTE ============ -->
+    <section class="section split" id="notice">
+      <div class="split-grid">
+        <!-- 공지 -->
+        <div class="notice-col">
+          <div class="block-head">
+            <h2><img src="assets/star.png" class="head-star" alt="">공지 / 업데이트</h2>
+            <a href="#notice" class="more">+ 더보기</a>
+          </div>
+          <div class="notice-list">
+            <article class="ncard">
+              <span class="nc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M16 8a5 5 0 010 8M19 5a9 9 0 010 14"/></svg></span>
+              <time>2026.07.15</time>
+              <p>1차 MVP 테스트 신청 오픈 예정</p>
+            </article>
+            <article class="ncard">
+              <span class="nc-ic gem"><img src="assets/gem.png" alt=""></span>
+              <time>2026.07.05</time>
+              <p>첫 번째 멤버 티저 공개</p>
+            </article>
+            <article class="ncard">
+              <span class="nc-ic"><img src="assets/star.png" alt=""></span>
+              <time>2026.06.28</time>
+              <p>초기 프로듀서 모집 시작</p>
+            </article>
+          </div>
+        </div>
+
+        <!-- 선택지 투표 -->
+        <div class="vote-col" id="story">
+          <div class="block-head">
+            <h2><img src="assets/star.png" class="head-star" alt="">이번 주 선택지 투표</h2>
+          </div>
+          <div class="vote-card">
+            <p class="vote-q">공연 직전, 무대 뒤에서 들려오는 <em>알 수 없는 속삭임.</em><br>당신은 어떻게 하시겠습니까?</p>
+            <div class="vote-opts" id="voteOpts">
+              <button class="vopt" data-choice="A"><span class="vl">A</span><p>속삭임의 정체를<br>확인한다</p></button>
+              <button class="vopt" data-choice="B"><span class="vl">B</span><p>멤버들을 먼저<br>무대로 보낸다</p></button>
+              <button class="vopt" data-choice="C"><span class="vl">C</span><p>무시하고 평소처럼<br>무대에 선다</p></button>
+            </div>
+            <p class="vote-note" id="voteNote">정답은 스토리 속 단서에 숨어 있습니다. <em>잘못된 선택은 이야기를 처음으로 되돌립니다.</em></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MEMBERS ============ -->
+    <section class="section members" id="members">
+      <div class="mem-head">
+        <div>
+          <span class="eyebrow">MEMBERS</span>
+          <h2>다섯 개의 이야기,<br>당신의 최애를 찾아보세요</h2>
+        </div>
+        <p class="sec-desc">완벽하지 않아서 더 빛나는 다섯 명.<br>그중 누군가는, 곧 당신의 이야기가 됩니다.</p>
+      </div>
+      <div class="member-grid" id="memberGrid"></div>
+    </section>
+
+    <!-- ============ PRODUCER CLUB ============ -->
+    <section class="section club" id="club">
+      <div class="club-card">
+        <div class="club-left">
+          <img class="club-sigil" src="assets/gem.png" alt="" />
+          <div class="club-body">
+            <span class="eyebrow"><img src="assets/star.png" alt="">PRODUCER CLUB</span>
+            <h2>정식 출시 전,<br>초기 프로듀서로 먼저 함께하세요</h2>
+            <p>V.E.L.O.의 여정을 가장 가까이에서 함께할 초기 프로듀서를 모집합니다. 여러분의 선택과 응원이 이야기를 완성합니다.</p>
+            <ul class="club-perks">
+              <li><i></i>개발 소식 선공개</li>
+              <li><i></i>선택지 · 멤버 투표 참여</li>
+              <li><i></i>MVP 테스트 우선 초대</li>
+              <li><i></i>정식 공개 시 가장 먼저 안내</li>
+            </ul>
+          </div>
+        </div>
+        <a href="#" class="club-cta">
+          <img src="assets/gem.png" alt="" />
+          <b>프로듀서 클럽<br>참여하기</b>
+          <span class="cta-arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============ FAN ZONE ============ -->
+    <section class="section fan" id="fan">
+      <div class="fan-layout">
+        <div class="fan-intro">
+          <span class="eyebrow">FAN ZONE</span>
+          <h2>팬과 함께<br>완성하는 이야기</h2>
+          <p class="sec-desc">자유게시판에서 멤버 이야기, 세계관 해석, 팬아트, 2차 창작을 함께 나눌 수 있어요.</p>
+          <a href="#" class="btn btn-ghost">팬존 입장하기</a>
+        </div>
+        <div class="fan-list">
+          <article class="frow">
+            <span class="fr-no">01</span>
+            <span class="fr-ic"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="22" height="22" rx="3"/><path d="M5 22l6-6 5 5 4-4 7 7"/><circle cx="12" cy="12" r="2.2"/></svg></span>
+            <div class="fr-tx"><h3>팬아트</h3><p>V.E.L.O. 멤버들을 멋지게 그려주세요!</p></div>
+            <span class="fr-arrow"></span>
+          </article>
+          <article class="frow">
+            <span class="fr-no">02</span>
+            <span class="fr-ic"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="14" cy="14" r="9"/><path d="M20.5 20.5L27 27"/><path d="M14 10v8M10 14h8"/></svg></span>
+            <div class="fr-tx"><h3>세계관 해석</h3><p>스토리의 진실을 함께 분석하고 추측해요.</p></div>
+            <span class="fr-arrow"></span>
+          </article>
+          <article class="frow">
+            <span class="fr-no">03</span>
+            <span class="fr-ic"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5h12l5 5v17H8z"/><path d="M20 5v5h5"/><path d="M12 16h9M12 20h9M12 24h6"/></svg></span>
+            <div class="fr-tx"><h3>2차 창작 가이드</h3><p>2차 창작을 위한 가이드라인을 안내합니다.</p></div>
+            <span class="fr-arrow"></span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GAMEPLAY PREVIEW ============ -->
+    <section class="section preview" id="preview">
+      <div class="sec-head"><span class="eyebrow"><img src="assets/star.png" alt="">GAMEPLAY</span><h2>게임 플레이 미리보기</h2></div>
+      <div class="preview-grid">
+        <article class="pcard">
+          <div class="pc-img" style="background-image:url('assets/preview-story.jpg')"><span class="pc-tag">STORY</span></div>
+          <div class="pc-body"><h3>스토리</h3><p>타임루프가 얽힌 오컬트 스토리를 감상하세요.</p></div>
+        </article>
+        <article class="pcard">
+          <div class="pc-img" style="background-image:url('assets/preview-schedule.jpg')"><span class="pc-tag">SCHEDULE</span></div>
+          <div class="pc-body"><h3>스케줄</h3><p>연습 · 방송 · 미팅 등 일주일을 직접 관리해요.</p></div>
+        </article>
+        <article class="pcard">
+          <div class="pc-img" style="background-image:url('assets/preview-live.jpg')"><span class="pc-tag">LIVE</span></div>
+          <div class="pc-body"><h3>LIVE</h3><p>리듬게임으로 무대를 완성하세요.</p></div>
+        </article>
+      </div>
+      <div class="loop">
+        <span>스토리</span><i></i><span>선택</span><i></i><span>스케줄</span><i></i><span>LIVE</span><i></i><span>보상</span><i></i><span class="loop-last">다음 스토리 해금</span>
+      </div>
+    </section>
+
+    <!-- ============ DEV LOG ============ -->
+    <section class="section devlog" id="devlog">
+      <div class="sec-head"><span class="eyebrow"><img src="assets/star.png" alt="">DEV LOG</span><h2>개발 소식</h2></div>
+      <div class="dev-grid" id="devGrid"></div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="ft">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
+        <p class="ft-tag">오컬트 아이돌 프로듀싱 리듬게임</p>
+      </div>
+      <div class="ft-mid">
+        <p class="ft-q">유튜버 / 동아리 / 리뷰어 / 테스터 문의</p>
+        <a href="#" class="btn btn-primary">문의하기 ✉</a>
+      </div>
+      <div class="ft-sns" id="footSns"></div>
+    </div>
+    <div class="ft-bottom">
+      <span class="ft-links"><a href="#">이용약관</a><a href="#">개인정보처리방침</a></span>
+      <span class="copyright">© 2026 V.E.L.O. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
