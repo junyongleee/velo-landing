@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V.E.L.O. FAN ZONE — 자유게시판</title>
+  <meta name="description" content="V.E.L.O. 팬들이 자유롭게 글과 이미지를 남기는 팬존 자유게시판입니다." />
+  <link rel="icon" type="image/png" href="assets/star.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="fan-page">
+  <header class="hd fan-hd scrolled" id="hd">
+    <div class="hd-inner">
+      <a href="index.html#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
+      <nav class="nav" id="nav">
+        <a href="index.html#hero">홈</a>
+        <a href="index.html#notice">공지</a>
+        <a href="index.html#members">멤버</a>
+        <a href="index.html#story">세계관</a>
+        <a href="fan.html" aria-current="page">팬존</a>
+        <a href="index.html#club">프로듀서 클럽</a>
+        <a href="#" data-launch-link="mvpTest">테스트 신청</a>
+      </nav>
+      <a href="#write" class="btn btn-primary hd-cta" data-action="write">글쓰기 <span class="btn-star">✦</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main class="community">
+    <section class="community-hero">
+      <div class="community-copy">
+        <span class="eyebrow"><img src="assets/star.png" alt="">FAN ZONE</span>
+        <h1>팬들이 남기는<br>작은 단서와 큰 애정</h1>
+        <p>멤버 이야기, 세계관 해석, 팬아트, MVP 테스트 후기를 자유롭게 남겨보세요. 목록에서는 제목만 보이고, 글을 눌러야 상세 내용을 볼 수 있습니다.</p>
+      </div>
+      <div class="community-card">
+        <img src="assets/gem.png" alt="" />
+        <b>현재는 임시 게시판</b>
+        <p>이 브라우저에 글이 저장됩니다. 실제 공개 운영은 로그인/DB 연결이 필요합니다.</p>
+      </div>
+    </section>
+
+    <section class="board-shell" aria-live="polite">
+      <div class="board-toolbar">
+        <div>
+          <span class="eyebrow">FREE BOARD</span>
+          <h2>자유게시판</h2>
+        </div>
+        <div class="board-actions">
+          <button class="btn btn-ghost" type="button" data-action="list">목록</button>
+          <button class="btn btn-primary" type="button" data-action="write">글쓰기</button>
+        </div>
+      </div>
+
+      <div class="board-view" id="boardListView">
+        <div class="board-head">
+          <span>제목</span>
+          <span>작성자</span>
+          <span>날짜</span>
+        </div>
+        <div class="post-list" id="postList"></div>
+        <p class="empty-board" id="emptyBoard">아직 등록된 글이 없습니다. 첫 번째 팬레터를 남겨주세요.</p>
+      </div>
+
+      <article class="board-view post-detail hidden" id="postDetailView"></article>
+
+      <form class="board-view post-editor hidden" id="postForm">
+        <input type="hidden" id="postId" />
+        <label>
+          <span>제목</span>
+          <input id="postTitle" type="text" maxlength="60" required placeholder="제목을 입력하세요" />
+        </label>
+        <div class="editor-grid">
+          <label>
+            <span>작성자</span>
+            <input id="postAuthor" type="text" maxlength="20" required placeholder="닉네임" />
+          </label>
+          <label>
+            <span>말머리</span>
+            <select id="postCategory">
+              <option>자유</option>
+              <option>팬아트</option>
+              <option>세계관 해석</option>
+              <option>후기</option>
+              <option>질문</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>내용</span>
+          <textarea id="postBody" rows="10" required placeholder="상세 글은 글을 눌렀을 때만 보입니다."></textarea>
+        </label>
+        <label class="image-field">
+          <span>이미지 첨부</span>
+          <input id="postImage" type="file" accept="image/*" />
+          <small>임시 게시판에서는 이미지 1장을 브라우저에 저장합니다.</small>
+        </label>
+        <div class="image-preview hidden" id="imagePreviewWrap">
+          <img id="imagePreview" src="assets/gem.png" alt="첨부 이미지 미리보기" />
+          <button class="btn btn-ghost" type="button" id="removeImage">이미지 제거</button>
+        </div>
+        <p class="editor-note">수정/삭제 버튼은 이 브라우저에서 작성한 글에만 표시됩니다.</p>
+        <div class="editor-actions">
+          <button class="btn btn-ghost" type="button" data-action="list">취소</button>
+          <button class="btn btn-primary" type="submit">저장하기</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer class="ft fan-ft">
+    <div class="ft-top">
+      <div class="ft-brand">
+        <a href="index.html#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
+        <p class="ft-tag">오컬트 아이돌 프로듀싱 리듬게임</p>
+      </div>
+      <div class="ft-mid">
+        <p class="ft-q">팬존은 커뮤니티 운영 정책과 로그인 기능을 붙이면 실제 서비스로 확장할 수 있어요.</p>
+      </div>
+      <div class="ft-sns" id="footSns"></div>
+    </div>
+    <div class="ft-bottom">
+      <span class="ft-links"><a href="index.html">랜딩페이지</a><a href="#board">팬존</a></span>
+      <span class="copyright">© 2026 V.E.L.O. All rights reserved.</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="fan.js"></script>
+</body>
+</html>
