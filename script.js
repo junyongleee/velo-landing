@@ -1,5 +1,12 @@
 // V.E.L.O. — 브랜드 랜딩페이지
 
+/* ===== 외부 CTA 링크 =====
+   텀블벅 / 구글폼 링크가 생기면 아래 빈 문자열만 실제 URL로 바꾸면 됩니다. */
+const LAUNCH_LINKS = {
+  producerClub: "",
+  mvpTest: "",
+};
+
 /* ===== 멤버 데이터 (파일 기준: 리/서/미/하/지 = 리아/서윤/미나/하나/지우) ===== */
 const MEMBERS = [
   { en: "ria", ko: "리아", roman: "RIA", role: "리더 · 메인보컬", accent: "#9a7be0",
@@ -127,6 +134,25 @@ if (navToggle) {
   navToggle.addEventListener("click", () => document.body.classList.toggle("nav-open"));
   nav.addEventListener("click", (e) => { if (e.target.tagName === "A") document.body.classList.remove("nav-open"); });
 }
+
+/* ===== 텀블벅 / MVP 신청 외부 링크 ===== */
+document.querySelectorAll("[data-launch-link]").forEach((link) => {
+  const type = link.dataset.launchLink;
+  const url = LAUNCH_LINKS[type];
+  const label = type === "producerClub" ? "텀블벅 후원 페이지" : "MVP 테스트 신청 구글폼";
+
+  if (url) {
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    return;
+  }
+
+  link.addEventListener("click", (e) => {
+    e.preventDefault();
+    alert(`${label}는 아직 준비 중입니다. 링크가 생기면 바로 연결해둘게요.`);
+  });
+});
 
 /* ===== 스크롤 등장 ===== */
 const io = new IntersectionObserver((es) => es.forEach((en) => {
