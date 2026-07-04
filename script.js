@@ -35,7 +35,7 @@ const MEMBERS = [
 const grid = document.getElementById("memberGrid");
 if (grid) {
   grid.innerHTML = MEMBERS.map((m, i) => `
-    <article class="mcard reveal" style="--accent:${m.accent}; --d:${i * 0.06}s">
+    <article class="mcard reveal" data-member-id="${m.en}" style="--accent:${m.accent}; --d:${i * 0.06}s">
       <div class="mc-photo">
         <span class="mc-star"><img src="assets/star.png" alt=""></span>
         <span class="mc-no">0${i + 1}</span>
@@ -53,9 +53,44 @@ if (grid) {
         </div>
       </div>
     </article>`).join("");
-  grid.addEventListener("click", (e) => {
+  const localFavorites = new Set(JSON.parse(localStorage.getItem("veloMemberFavorites") || "[]"));
+  const applyFavorites = (favorites) => {
+    grid.querySelectorAll(".mcard").forEach((card) => {
+      const isFavorite = favorites.has(card.dataset.memberId);
+      const heart = card.querySelector(".mc-heart");
+      if (!heart) return;
+      heart.classList.toggle("on", isFavorite);
+      heart.setAttribute("aria-pressed", String(isFavorite));
+    });
+  };
+
+  applyFavorites(localFavorites);
+  window.VeloApi?.getMemberFavorites().then((response) => {
+    if (!response?.ok) return;
+    const remoteFavorites = new Set(response.favorites || []);
+    localStorage.setItem("veloMemberFavorites", JSON.stringify([...remoteFavorites]));
+    applyFavorites(remoteFavorites);
+  });
+
+  grid.addEventListener("click", async (e) => {
     const h = e.target.closest(".mc-heart");
-    if (h) h.classList.toggle("on");
+    if (!h) return;
+    const card = h.closest(".mcard");
+    const memberId = card?.dataset.memberId;
+    if (!memberId) return;
+
+    const favorites = new Set(JSON.parse(localStorage.getItem("veloMemberFavorites") || "[]"));
+    const nextSelected = !h.classList.contains("on");
+    h.classList.toggle("on", nextSelected);
+    h.setAttribute("aria-pressed", String(nextSelected));
+    if (nextSelected) favorites.add(memberId);
+    else favorites.delete(memberId);
+    localStorage.setItem("veloMemberFavorites", JSON.stringify([...favorites]));
+
+    const response = await window.VeloApi?.setMemberFavorite(memberId, nextSelected);
+    if (response && !response.ok) {
+      console.warn("캐릭터 선호 기록은 로컬에만 저장되었습니다.", response.message);
+    }
   });
 }
 

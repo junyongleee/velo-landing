@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V.E.L.O. Prologue — 웹소설</title>
+  <meta name="description" content="V.E.L.O. 프롤로그를 웹소설처럼 읽고, 감상글로 다음 화를 해금하세요." />
+  <link rel="icon" type="image/png" href="assets/star.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="story-page">
+  <header class="hd fan-hd scrolled" id="hd">
+    <div class="hd-inner">
+      <a href="index.html#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
+      <nav class="nav" id="nav">
+        <a href="index.html#hero">홈</a>
+        <a href="index.html#notice">공지</a>
+        <a href="index.html#members">멤버</a>
+        <a href="story.html" aria-current="page">스토리</a>
+        <a href="fan.html">팬존</a>
+        <a href="index.html#club">프로듀서 클럽</a>
+        <a href="#" data-launch-link="mvpTest">테스트 신청</a>
+      </nav>
+      <a href="fan.html" class="btn btn-primary hd-cta">팬존 가기 <span class="btn-star">✦</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="menu"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <main class="story-main">
+    <section class="story-hero" id="storyHome">
+      <span class="eyebrow"><img src="assets/star.png" alt="">PROLOGUE</span>
+      <h1>빛을 잃은 아이돌,<br>유령의 무대에 서다.</h1>
+      <p>잊힌 아이돌들이 다시 노래하기 시작하는, V.E.L.O.의 첫 번째 이야기. 0화부터 5화까지는 바로 읽을 수 있고 6화와 7화는 팬존 감상글로 순차 해금됩니다.</p>
+    </section>
+
+    <section class="episode-shell">
+      <div class="episode-list" id="episodeList"></div>
+      <article class="novel-reader hidden" id="novelReader"></article>
+    </section>
+  </main>
+
+  <script src="api-client.js"></script>
+  <script src="script.js"></script>
+  <script src="story.js"></script>
+</body>
+</html>

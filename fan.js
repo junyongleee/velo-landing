@@ -1,6 +1,7 @@
 const POSTS_KEY = "veloFanPosts";
 const USER_KEY = "veloFanUserKey";
 const NAME_KEY = "veloFanAuthorName";
+const PENDING_UNLOCK_KEY = "veloPendingUnlockEpisode";
 
 const seedPosts = [
   {
@@ -59,6 +60,8 @@ const removeImage = document.getElementById("removeImage");
 
 let draftImage = "";
 let draftImageName = "";
+let cachedPosts = null;
+let useRemotePosts = false;
 
 function getUserKey() {
   const savedKey = localStorage.getItem(USER_KEY);
@@ -69,7 +72,7 @@ function getUserKey() {
   return nextKey;
 }
 
-function getPosts() {
+function getLocalPosts() {
   const savedPosts = localStorage.getItem(POSTS_KEY);
   if (!savedPosts) {
     localStorage.setItem(POSTS_KEY, JSON.stringify(seedPosts));
@@ -84,8 +87,27 @@ function getPosts() {
   }
 }
 
-function savePosts(posts) {
+function saveLocalPosts(posts) {
   localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
+}
+
+async function loadPosts() {
+  if (window.VeloApi) {
+    const response = await window.VeloApi.listPosts();
+    if (response?.ok) {
+      useRemotePosts = true;
+      cachedPosts = response.posts;
+      return cachedPosts;
+    }
+  }
+
+  useRemotePosts = false;
+  cachedPosts = getLocalPosts();
+  return cachedPosts;
+}
+
+function getCachedPosts() {
+  return cachedPosts || getLocalPosts();
 }
 
 function escapeHtml(value) {
@@ -116,8 +138,8 @@ function setView(viewName) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function renderList() {
-  const posts = sortPosts(getPosts());
+async function renderList() {
+  const posts = sortPosts(await loadPosts());
   emptyBoard.classList.toggle("hidden", posts.length > 0);
   postList.innerHTML = posts.map((post) => `
     <button class="post-row" type="button" data-id="${escapeHtml(post.id)}">
@@ -133,13 +155,13 @@ function renderList() {
 }
 
 function renderDetail(id) {
-  const post = getPosts().find((candidatePost) => candidatePost.id === id);
+  const post = getCachedPosts().find((candidatePost) => candidatePost.id === id);
   if (!post) {
     renderList();
     return;
   }
 
-  const isOwner = post.ownerKey === userKey;
+  const isOwner = useRemotePosts ? post.ownerKey && post.ownerKey !== "seed" : post.ownerKey === userKey;
   detailView.innerHTML = `
     <div class="detail-top">
       <button class="back-link" type="button" data-action="list">← 목록으로</button>
@@ -166,9 +188,11 @@ function renderDetail(id) {
 function resetForm() {
   postId.value = "";
   postTitle.value = "";
+  postTitle.placeholder = "제목을 입력하세요";
   postAuthor.value = localStorage.getItem(NAME_KEY) || "";
   postCategory.value = "자유";
   postBody.value = "";
+  postBody.placeholder = "상세 글은 글을 눌렀을 때만 보입니다.";
   postImage.value = "";
   draftImage = "";
   draftImageName = "";
@@ -181,9 +205,32 @@ function openWriteForm() {
   postTitle.focus();
 }
 
+function openReviewForm() {
+  const pendingEpisode = localStorage.getItem(PENDING_UNLOCK_KEY);
+  resetForm();
+  postCategory.value = "감상글";
+  postTitle.value = pendingEpisode ? `${pendingEpisode}화 감상글` : "";
+  postTitle.placeholder = "프롤로그 감상글 제목";
+  postBody.placeholder = "읽고 난 느낌, 궁금한 단서, 응원 메시지를 남겨주세요.";
+  setView("form");
+  postBody.focus();
+}
+
+function getReviewCount(posts) {
+  return posts.filter((post) => post.ownerKey === userKey && post.category === "감상글").length;
+}
+
+function shouldOpenUnlockedEpisode(posts) {
+  const pendingEpisode = Number(localStorage.getItem(PENDING_UNLOCK_KEY));
+  if (!pendingEpisode) return false;
+
+  const reviewCount = getReviewCount(posts);
+  return pendingEpisode === 6 ? reviewCount >= 1 : reviewCount >= 2;
+}
+
 function openEditForm(id) {
-  const post = getPosts().find((candidatePost) => candidatePost.id === id);
-  if (!post || post.ownerKey !== userKey) return;
+  const post = getCachedPosts().find((candidatePost) => candidatePost.id === id);
+  if (!post) return;
 
   postId.value = post.id;
   postTitle.value = post.title;
@@ -203,49 +250,87 @@ function updateImagePreview() {
   if (draftImage) imagePreview.src = draftImage;
 }
 
-function handleSubmit(event) {
+async function saveRemotePost(editingId, payload) {
+  if (!window.VeloApi) return null;
+  return editingId
+    ? window.VeloApi.updatePost(editingId, payload)
+    : window.VeloApi.createPost(payload);
+}
+
+async function handleSubmit(event) {
   event.preventDefault();
 
   const now = new Date().toISOString();
   const savedName = postAuthor.value.trim();
-  const posts = getPosts();
   const editingId = postId.value;
   localStorage.setItem(NAME_KEY, savedName);
 
-  if (editingId) {
-    const nextPosts = posts.map((post) => {
-      if (post.id !== editingId || post.ownerKey !== userKey) return post;
-      return {
-        ...post,
-        title: postTitle.value.trim(),
-        author: savedName,
-        category: postCategory.value,
-        body: postBody.value.trim(),
-        image: draftImage,
-        imageName: draftImageName,
-        updatedAt: now
-      };
-    });
-    savePosts(nextPosts);
-    renderDetail(editingId);
-    return;
-  }
-
-  const newPost = {
-    id: `post-${Date.now()}`,
+  const payload = {
     title: postTitle.value.trim(),
     category: postCategory.value,
     author: savedName,
     body: postBody.value.trim(),
     image: draftImage,
     imageName: draftImageName,
+  };
+
+  if (useRemotePosts) {
+    const response = await saveRemotePost(editingId, payload);
+    if (response?.ok) {
+      if (payload.category === "감상글" && response.unlockState && shouldOpenRemoteUnlockedEpisode(response.unlockState)) {
+        const pendingEpisode = localStorage.getItem(PENDING_UNLOCK_KEY);
+        localStorage.removeItem(PENDING_UNLOCK_KEY);
+        window.location.href = `story.html?episode=${pendingEpisode}`;
+        return;
+      }
+      cachedPosts = await loadPosts();
+      renderDetail(response.post.id);
+      return;
+    }
+
+    alert(response?.message || "저장에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    return;
+  }
+
+  const posts = getLocalPosts();
+  if (editingId) {
+    const nextPosts = posts.map((post) => {
+      if (post.id !== editingId || post.ownerKey !== userKey) return post;
+      return {
+        ...post,
+        ...payload,
+        updatedAt: now
+      };
+    });
+    saveLocalPosts(nextPosts);
+    cachedPosts = nextPosts;
+    renderDetail(editingId);
+    return;
+  }
+
+  const newPost = {
+    id: `post-${Date.now()}`,
+    ...payload,
     ownerKey: userKey,
     createdAt: now,
     updatedAt: now
   };
 
-  savePosts([newPost, ...posts]);
+  const nextPosts = [newPost, ...posts];
+  saveLocalPosts(nextPosts);
+  cachedPosts = nextPosts;
+  if (newPost.category === "감상글" && shouldOpenUnlockedEpisode(nextPosts)) {
+    const pendingEpisode = localStorage.getItem(PENDING_UNLOCK_KEY);
+    localStorage.removeItem(PENDING_UNLOCK_KEY);
+    window.location.href = `story.html?episode=${pendingEpisode}`;
+    return;
+  }
   renderDetail(newPost.id);
+}
+
+function shouldOpenRemoteUnlockedEpisode(unlockState) {
+  const pendingEpisode = Number(localStorage.getItem(PENDING_UNLOCK_KEY));
+  return Boolean(pendingEpisode && unlockState.maxUnlockedEpisode >= pendingEpisode);
 }
 
 postList.addEventListener("click", (event) => {
@@ -254,7 +339,7 @@ postList.addEventListener("click", (event) => {
   renderDetail(row.dataset.id);
 });
 
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
   const trigger = event.target.closest("[data-action]");
   if (!trigger) return;
 
@@ -263,12 +348,23 @@ document.addEventListener("click", (event) => {
   if (action === "write") openWriteForm();
   if (action === "edit") openEditForm(trigger.dataset.id);
   if (action === "delete") {
-    const post = getPosts().find((candidatePost) => candidatePost.id === trigger.dataset.id);
-    if (!post || post.ownerKey !== userKey) return;
+    const post = getCachedPosts().find((candidatePost) => candidatePost.id === trigger.dataset.id);
+    if (!post) return;
     const shouldDelete = confirm("이 글을 삭제할까요?");
     if (!shouldDelete) return;
-    savePosts(getPosts().filter((candidatePost) => candidatePost.id !== post.id));
-    renderList();
+
+    if (useRemotePosts && window.VeloApi) {
+      const response = await window.VeloApi.deletePost(post.id);
+      if (!response?.ok) {
+        alert(response?.message || "삭제에 실패했습니다.");
+        return;
+      }
+      await renderList();
+      return;
+    }
+
+    saveLocalPosts(getLocalPosts().filter((candidatePost) => candidatePost.id !== post.id));
+    await renderList();
   }
 });
 
@@ -293,4 +389,5 @@ removeImage.addEventListener("click", () => {
 });
 
 postForm.addEventListener("submit", handleSubmit);
-renderList();
+if (window.location.hash === "#write-review") openReviewForm();
+else renderList();

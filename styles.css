@@ -39,7 +39,7 @@ em { font-style: normal; }
 .section > *:not(.hero-bg) { max-width: var(--maxw); margin-left: auto; margin-right: auto; }
 
 /* ---- 섹션 헤더 ---- */
-.eyebrow { display: inline-flex; align-items: center; gap: .5rem; font-family: var(--label); font-size: .74rem; font-weight: 600; letter-spacing: .26em; color: var(--purple); text-transform: uppercase; }
+.eyebrow { display: inline-flex; align-items: center; gap: .65rem; font-family: var(--label); font-size: .76rem; font-weight: 700; letter-spacing: .34em; line-height: 1.9; color: var(--purple); text-transform: uppercase; }
 .eyebrow img { width: .95rem; height: .95rem; }
 .sec-head { margin-bottom: 3.2rem; }
 .sec-head.center { text-align: center; }
@@ -104,8 +104,8 @@ em { font-style: normal; }
 .cast { position: absolute; bottom: -2vh; width: auto; object-fit: contain; object-position: bottom;
   transition: transform .5s cubic-bezier(.2,.8,.2,1); }
 .c-ria    { height: 92vh; left: 50%; transform: translateX(-50%); z-index: 6; }
-.c-mina   { height: 80vh; left: 30%; transform: translateX(-50%); z-index: 5; }
-.c-jiwu   { height: 78vh; left: 71%; transform: translateX(-50%); z-index: 5; }
+.c-mina   { height: 80vh; left: 30%; transform: translateX(-50%); z-index: 7; }
+.c-jiwu   { height: 78vh; left: 66.5%; transform: translateX(-50%); z-index: 7; }
 .c-hana   { height: 86vh; left: 13%; transform: translateX(-50%); z-index: 4; }
 .c-seoyun { height: 82vh; left: 88%; transform: translateX(-50%); z-index: 4; }
 
@@ -383,6 +383,25 @@ em { font-style: normal; }
 .frow:hover .fr-arrow { border-color: var(--purple); transform: rotate(45deg) translate(2px,-2px); }
 
 /* ============================================================
+   홈 프롤로그 진입 섹션
+   ============================================================ */
+.story-entry { background: #fff; }
+.story-entry-title { margin-bottom: 1.8rem; }
+.section-title { margin-bottom: 2rem; }
+.story-entry-head { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; align-items: end; margin-bottom: 2.2rem; }
+.story-entry-head h3 { font-size: clamp(1.9rem, 3.8vw, 3rem); line-height: 1.18; letter-spacing: -0.04em; margin: 0; }
+.story-entry-head .sec-desc { margin: 0; }
+.story-entry-card { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; padding: 2.2rem; border-radius: 30px; background: linear-gradient(135deg, #f8f7fb, #fff); border: 1px solid var(--line); box-shadow: var(--shadow-m); }
+.story-entry-copy { display: flex; flex-direction: column; justify-content: center; min-height: 280px; }
+.story-entry-copy b { font-size: clamp(1.45rem, 3vw, 2.25rem); letter-spacing: -0.04em; }
+.story-entry-copy p { color: var(--ink-2); margin: 1rem 0 1.5rem; line-height: 1.75; }
+.story-entry-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
+.story-mini-list { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.story-mini-list span { display: flex; align-items: center; min-height: 3.35rem; padding: .95rem 1rem; border-radius: 16px; background: #fff; border: 1px solid var(--line); color: var(--ink); font-weight: 800; letter-spacing: -0.02em; }
+.story-mini-list .locked { color: var(--ink-3); background: #f4f3f7; }
+.story-mini-list .locked::after { content: ""; width: .72rem; height: .72rem; margin-left: auto; border-radius: 50%; background: #f1d33b; box-shadow: inset 0 0 0 3px #161320; }
+
+/* ============================================================
    팬존 자유게시판
    ============================================================ */
 .fan-page { background: #faf9fc; }
@@ -435,10 +454,42 @@ em { font-style: normal; }
 .editor-actions { justify-content: flex-end; margin-top: 1.4rem; }
 .fan-ft { margin-top: 0; }
 
+/* ============================================================
+   프롤로그 웹소설
+   ============================================================ */
+.story-page { background: #f5f3f8; }
+.story-main { padding-top: 76px; }
+.story-hero { max-width: 880px; margin: 0 auto; padding: 7rem 1.6rem 3rem; }
+.story-hero h1 { font-size: clamp(2.4rem, 7vw, 5rem); line-height: 1.02; letter-spacing: -0.06em; margin: 1rem 0 1.2rem; }
+.story-hero p { color: var(--ink-2); font-size: 1.05rem; max-width: 58ch; }
+.episode-shell { max-width: 880px; margin: 0 auto 7rem; padding: 0 1.6rem; }
+.episode-list { display: flex; flex-direction: column; gap: 1.7rem; padding: 2.2rem 0; }
+.episode-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; width: 100%; padding: 0; border: 0; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.episode-row span { font-size: clamp(1.05rem, 2.4vw, 1.42rem); font-weight: 800; letter-spacing: -0.03em; }
+.episode-row i { width: .8rem; height: .8rem; display: inline-grid; place-items: center; border-radius: 50%; background: #f1d33b; color: #1c1726; font-size: .45rem; font-style: normal; box-shadow: inset 0 0 0 3px #161320; }
+.episode-row.locked span { color: var(--ink-3); }
+.episode-row:hover span { color: var(--purple); }
+.novel-reader { padding: 4rem 0 1rem; }
+.novel-top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; color: var(--ink-3); font-size: .9rem; margin-bottom: 2rem; }
+.story-side-nav { position: fixed; inset: 0; z-index: 80; pointer-events: none; }
+.story-side-btn { position: fixed; top: 50%; display: inline-flex; align-items: center; justify-content: center; min-width: 8.6rem; border: 1px solid var(--line); border-radius: 999px; padding: .86rem 1.15rem; background: rgba(255,255,255,.92); color: var(--purple); font-weight: 900; font-family: var(--sans); cursor: pointer; box-shadow: var(--shadow-s); backdrop-filter: blur(14px); pointer-events: auto; transition: transform .2s, box-shadow .2s, background .2s; }
+.story-side-btn-prev { left: clamp(1rem, 4vw, 4rem); transform: translateY(-50%); }
+.story-side-btn-next { right: clamp(1rem, 4vw, 4rem); transform: translateY(-50%); background: var(--purple); color: #fff; border-color: transparent; }
+.story-side-btn:hover { transform: translateY(calc(-50% - 2px)); box-shadow: var(--shadow-m); }
+.novel-reader h1 { font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.2; letter-spacing: -0.05em; margin-bottom: 3rem; }
+.novel-flow { display: flex; flex-direction: column; gap: 1.4rem; }
+.novel-flow h2 { margin: 1.8rem 0 .4rem; padding-top: 1.4rem; border-top: 1px solid var(--line-2); font-size: 1.05rem; color: var(--purple); letter-spacing: .02em; }
+.novel-meta { display: inline-flex; width: fit-content; padding: .45rem .8rem; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink-3); font-size: .84rem; }
+.novel-narration { color: var(--ink); font-size: 1.04rem; line-height: 2.05; word-break: keep-all; }
+.novel-line { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 1.2rem; align-items: start; padding: .3rem 0; }
+.novel-line strong { color: var(--purple); font-size: .98rem; line-height: 1.9; white-space: normal; word-break: keep-all; }
+.novel-line p { min-width: 0; color: var(--ink); font-size: 1.02rem; line-height: 1.9; white-space: normal; overflow: visible; word-break: keep-all; }
+
 @media (max-width: 1080px) {
   .mem-head { grid-template-columns: 1fr; gap: .8rem; }
   .fan-layout { grid-template-columns: 1fr; gap: 2rem; }
   .community-hero { grid-template-columns: 1fr; align-items: start; }
+  .story-entry-head, .story-entry-card { grid-template-columns: 1fr; }
   .dev-grid::before { display: none; }
 }
 @media (max-width: 900px) {
@@ -462,6 +513,13 @@ em { font-style: normal; }
   .post-row { grid-template-columns: 1fr; gap: .35rem; }
   .editor-grid, .image-preview { grid-template-columns: 1fr; }
   .image-preview img { width: 100%; max-height: 220px; }
+  .story-hero { padding-top: 5rem; }
+  .story-mini-list { grid-template-columns: 1fr; }
+  .novel-line { grid-template-columns: 1fr; }
+  .novel-line strong { grid-row: auto; }
+  .story-side-nav { inset: auto 1rem 1rem; display: flex; justify-content: space-between; gap: .75rem; }
+  .story-side-btn { position: static; min-width: 0; flex: 1; padding: .78rem .8rem; font-size: .86rem; transform: none; }
+  .story-side-btn:hover { transform: translateY(-2px); }
 }
 
 /* ============================================================
