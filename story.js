@@ -34,8 +34,67 @@ const SPEAKERS = [
 
 const episodeList = document.getElementById("episodeList");
 const novelReader = document.getElementById("novelReader");
+let episodeStructuredData = null;
+const STORY_BASE_URL = "https://velo-landing-puce.vercel.app/story.html";
 let prologueSections = {};
 let remoteUnlockedEpisode = null;
+
+function setMetaContent(selector, content) {
+  const element = document.querySelector(selector);
+  if (element) element.setAttribute("content", content);
+}
+
+function setStoryMetadata(episode = null) {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const isEpisode = Boolean(episode);
+  const url = isEpisode ? `${STORY_BASE_URL}?episode=${episode.episode}` : STORY_BASE_URL;
+  const title = isEpisode
+    ? `${episode.episode}화 ${episode.title} | V.E.L.O. 오컬트 아이돌 비주얼 노벨`
+    : "V.E.L.O. 스토리 | 오컬트 아이돌 비주얼 노벨";
+  const description = isEpisode
+    ? `V.E.L.O. 오컬트 아이돌 비주얼 노벨 ${episode.episode}화 '${episode.title}'. 유령의 무대에서 다시 데뷔하는 다섯 아이돌의 서사를 읽어보세요.`
+    : "빛을 잃은 다섯 아이돌이 유령의 무대에서 다시 데뷔하는 V.E.L.O. 오컬트 비주얼 노벨 스토리.";
+
+  document.title = title;
+  if (canonical) canonical.href = url;
+  setMetaContent('meta[name="description"]', description);
+  setMetaContent('meta[property="og:title"]', title);
+  setMetaContent('meta[property="og:description"]', description);
+  setMetaContent('meta[property="og:url"]', url);
+  setMetaContent('meta[name="twitter:title"]', title);
+  setMetaContent('meta[name="twitter:description"]', description);
+
+  if (!isEpisode) {
+    episodeStructuredData?.remove();
+    episodeStructuredData = null;
+    return;
+  }
+
+  if (!episodeStructuredData) {
+    episodeStructuredData = document.createElement("script");
+    episodeStructuredData.id = "episodeStructuredData";
+    episodeStructuredData.type = "application/ld+json";
+    document.head.appendChild(episodeStructuredData);
+  }
+  episodeStructuredData.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Chapter",
+    "@id": `${url}#chapter`,
+    url,
+    name: `${episode.episode}화. ${episode.title}`,
+    position: episode.episode,
+    inLanguage: "ko-KR",
+    isPartOf: {
+      "@type": "CreativeWorkSeries",
+      "@id": `${STORY_BASE_URL}#series`,
+      name: "V.E.L.O. 오컬트 아이돌 비주얼 노벨",
+      url: STORY_BASE_URL,
+    },
+    about: {
+      "@id": "https://velo-landing-puce.vercel.app/#game",
+    },
+  });
+}
 
 function getStoryUserKey() {
   const savedKey = localStorage.getItem(STORY_USER_KEY);
@@ -230,15 +289,16 @@ function parseBlocks(lines) {
 
 function renderEpisodeList() {
   const unlockedEpisode = getUnlockedEpisode();
+  setStoryMetadata();
   novelReader.classList.add("hidden");
   episodeList.classList.remove("hidden");
   episodeList.innerHTML = EPISODES.map((episode) => {
     const isLocked = episode.episode > unlockedEpisode;
     return `
-      <button class="episode-row ${isLocked ? "locked" : ""}" type="button" data-episode="${episode.episode}">
+      <a class="episode-row ${isLocked ? "locked" : ""}" href="story.html?episode=${episode.episode}" data-episode="${episode.episode}">
         <span>${episode.episode}화. ${escapeStoryHtml(episode.title)}</span>
         ${isLocked ? "<i aria-hidden=\"true\">●</i>" : ""}
-      </button>
+      </a>
     `;
   }).join("");
 }
@@ -267,6 +327,7 @@ function renderReader(episodeNumber) {
     return;
   }
 
+  setStoryMetadata(episode);
   const blocks = getEpisodeContent(episode);
   const previousEpisode = EPISODES.find((candidate) => candidate.episode === episode.episode - 1);
   const nextEpisode = EPISODES.find((candidate) => candidate.episode === episode.episode + 1);
@@ -282,8 +343,8 @@ function renderReader(episodeNumber) {
       ${blocks.map((block) => renderBlock(block)).join("")}
     </div>
     <div class="story-side-nav" aria-label="회차 이동">
-      ${previousEpisode ? `<button class="story-side-btn story-side-btn-prev" type="button" data-target-episode="${previousEpisode.episode}">← 이전 화 보기</button>` : ""}
-      ${nextEpisode ? `<button class="story-side-btn story-side-btn-next" type="button" data-target-episode="${nextEpisode.episode}">다음 화 보기 →</button>` : ""}
+      ${previousEpisode ? `<a class="story-side-btn story-side-btn-prev" href="story.html?episode=${previousEpisode.episode}">← 이전 화 보기</a>` : ""}
+      ${nextEpisode ? `<a class="story-side-btn story-side-btn-next" href="story.html?episode=${nextEpisode.episode}">다음 화 보기 →</a>` : ""}
     </div>
   `;
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -320,13 +381,10 @@ function requestUnlock(episodeNumber) {
 episodeList.addEventListener("click", (event) => {
   const row = event.target.closest(".episode-row");
   if (!row) return;
-  renderReader(Number(row.dataset.episode));
-});
-
-novelReader.addEventListener("click", (event) => {
-  const episodeButton = event.target.closest("[data-target-episode]");
-  if (!episodeButton) return;
-  renderReader(Number(episodeButton.dataset.targetEpisode));
+  const episodeNumber = Number(row.dataset.episode);
+  if (episodeNumber <= getUnlockedEpisode()) return;
+  event.preventDefault();
+  requestUnlock(episodeNumber);
 });
 
 async function loadRemoteUnlockState() {

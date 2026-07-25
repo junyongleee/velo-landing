@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "check": "node --check api/session.js && node --check api/posts.js && node --check api/unlocks.js && node --check api/reactions.js"
+    "check": "node --check script.js && node --check story.js && node --check fan.js && node --check api-client.js && node --check api/session.js && node --check api/posts.js && node --check api/unlocks.js && node --check api/reactions.js"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"
