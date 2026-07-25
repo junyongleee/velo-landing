@@ -2,9 +2,12 @@ const crypto = require("crypto");
 const {
   CATEGORY_LABELS,
   admin,
+  assertUserCanWrite,
   categoryToId,
   cleanString,
+  enforceRateLimit,
   ensureUser,
+  getUserRateLimitKey,
   readJson,
   recordEvent,
   sendJson,
@@ -13,6 +16,50 @@ const {
 } = require("./_firebase");
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const PASSWORD_HASH_BYTES = 32;
+const PUBLIC_POST_CACHE_ID = "fan_posts_latest";
+const MAX_CACHED_POSTS = 80;
+
+function readPostPassword(payload) {
+  const password = String(payload.password ?? "");
+  if (!password) {
+    const error = new Error("수정/삭제용 비밀번호를 입력해주세요.");
+    error.statusCode = 400;
+    throw error;
+  }
+  return password;
+}
+
+function createPasswordRecord(password) {
+  const salt = crypto.randomBytes(16).toString("base64url");
+  return {
+    postPasswordSalt: salt,
+    postPasswordHash: crypto.scryptSync(password, salt, PASSWORD_HASH_BYTES).toString("base64url"),
+  };
+}
+
+function hashPassword(password, salt) {
+  return crypto.scryptSync(password, salt, PASSWORD_HASH_BYTES);
+}
+
+function verifyPassword(password, salt, expectedHash) {
+  if (!salt || !expectedHash) return false;
+  const expected = Buffer.from(expectedHash, "base64url");
+  const actual = hashPassword(password, salt);
+  return expected.length === actual.length && crypto.timingSafeEqual(expected, actual);
+}
+
+function assertPostPassword(postData, userId, payload) {
+  const hasPassword = Boolean(postData.postPasswordSalt && postData.postPasswordHash);
+  if (!hasPassword && postData.ownerUserId === userId) return;
+
+  const password = readPostPassword(payload);
+  if (verifyPassword(password, postData.postPasswordSalt, postData.postPasswordHash)) return;
+
+  const error = new Error("비밀번호가 일치하지 않습니다.");
+  error.statusCode = 403;
+  throw error;
+}
 
 function normalizePost(doc, currentUserId = "") {
   const data = doc.data();
@@ -30,6 +77,10 @@ function normalizePost(doc, currentUserId = "") {
     createdAt: toIso(data.createdAt),
     updatedAt: toIso(data.updatedAt || data.createdAt),
   };
+}
+
+function normalizePublicPost(doc) {
+  return { ...normalizePost(doc, ""), ownerKey: "" };
 }
 
 function parseDataUrl(dataUrl) {
@@ -71,13 +122,38 @@ async function uploadImage(bucket, userId, postId, imageName, imageData) {
 }
 
 async function listPosts(db, userId) {
-  const snapshot = await db.collection("posts")
-    .where("isDeleted", "==", false)
-    .orderBy("createdAt", "desc")
-    .limit(100)
-    .get();
+  const cacheSnapshot = await db.collection("public_cache").doc(PUBLIC_POST_CACHE_ID).get();
+  if (cacheSnapshot.exists && Array.isArray(cacheSnapshot.data().posts) && cacheSnapshot.data().posts.length > 0) {
+    return cacheSnapshot.data().posts.map((post) => ({
+      ...post,
+      ownerKey: "",
+    }));
+  }
 
-  return snapshot.docs.map((doc) => normalizePost(doc, userId));
+  return rebuildPublicPostsCache(db, userId);
+}
+
+async function rebuildPublicPostsCache(db, userId = "") {
+  const snapshot = await db.collection("posts")
+    .limit(200)
+    .get();
+  const visibleDocs = snapshot.docs.filter((doc) => doc.data().isDeleted !== true);
+
+  const posts = visibleDocs
+    .map((doc) => normalizePost(doc, userId))
+    .sort((leftPost, rightPost) => new Date(rightPost.createdAt) - new Date(leftPost.createdAt))
+    .slice(0, 100);
+  const publicPosts = visibleDocs
+    .map((doc) => normalizePublicPost(doc))
+    .sort((leftPost, rightPost) => new Date(rightPost.createdAt) - new Date(leftPost.createdAt))
+    .slice(0, MAX_CACHED_POSTS);
+
+  await db.collection("public_cache").doc(PUBLIC_POST_CACHE_ID).set({
+    posts: publicPosts,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true });
+
+  return posts.slice(0, 100);
 }
 
 module.exports = async function handler(req, res) {
@@ -97,11 +173,18 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === "POST") {
+      await assertUserCanWrite(db, userId);
+      await enforceRateLimit(db, getUserRateLimitKey(req, userId, "post_create"), 5, 10 * 60 * 1000);
       const payload = await readJson(req);
+      const password = readPostPassword(payload);
+      if (payload.image) {
+        await enforceRateLimit(db, getUserRateLimitKey(req, userId, "image_upload"), 10, 60 * 60 * 1000);
+      }
       const postRef = db.collection("posts").doc();
       const image = await uploadImage(bucket, userId, postRef.id, payload.imageName, payload.image);
       const now = admin.firestore.FieldValue.serverTimestamp();
       const categoryId = categoryToId(payload.category);
+      const passwordRecord = createPasswordRecord(password);
 
       await postRef.set({
         title: cleanString(payload.title, 120),
@@ -112,6 +195,7 @@ module.exports = async function handler(req, res) {
         imageUrl: image.imageUrl,
         imageStoragePath: image.imageStoragePath,
         imageOriginalName: image.imageOriginalName,
+        ...passwordRecord,
         isDeleted: false,
         createdAt: now,
         updatedAt: now,
@@ -120,11 +204,14 @@ module.exports = async function handler(req, res) {
       await recordEvent(db, userId, "post_created", "post", postRef.id, { categoryId });
       const unlockState = categoryId === "review" ? await syncStoryUnlocks(db, userId, postRef.id) : null;
       const savedPost = await postRef.get();
+      await rebuildPublicPostsCache(db, userId);
       sendJson(res, 201, { ok: true, post: normalizePost(savedPost, userId), unlockState });
       return;
     }
 
     if (req.method === "PUT" || req.method === "PATCH") {
+      await assertUserCanWrite(db, userId);
+      await enforceRateLimit(db, getUserRateLimitKey(req, userId, "post_update"), 20, 10 * 60 * 1000);
       if (!id) {
         sendJson(res, 400, { ok: false, message: "수정할 글 ID가 필요합니다." });
         return;
@@ -132,12 +219,16 @@ module.exports = async function handler(req, res) {
 
       const postRef = db.collection("posts").doc(id);
       const post = await postRef.get();
-      if (!post.exists || post.data().ownerUserId !== userId) {
-        sendJson(res, 403, { ok: false, message: "작성자만 수정할 수 있습니다." });
+      if (!post.exists || post.data().isDeleted) {
+        sendJson(res, 404, { ok: false, message: "글을 찾을 수 없습니다." });
         return;
       }
 
       const payload = await readJson(req);
+      assertPostPassword(post.data(), userId, payload);
+      if (payload.image) {
+        await enforceRateLimit(db, getUserRateLimitKey(req, userId, "image_upload"), 10, 60 * 60 * 1000);
+      }
       const current = post.data();
       const image = payload.image
         ? await uploadImage(bucket, userId, id, payload.imageName, payload.image)
@@ -162,6 +253,7 @@ module.exports = async function handler(req, res) {
       await recordEvent(db, userId, "post_updated", "post", id, { categoryId });
       const unlockState = categoryId === "review" ? await syncStoryUnlocks(db, userId, id) : null;
       const savedPost = await postRef.get();
+      await rebuildPublicPostsCache(db, userId);
       sendJson(res, 200, { ok: true, post: normalizePost(savedPost, userId), unlockState });
       return;
     }
@@ -172,13 +264,15 @@ module.exports = async function handler(req, res) {
         return;
       }
 
+      const payload = await readJson(req);
       const postRef = db.collection("posts").doc(id);
       const post = await postRef.get();
-      if (!post.exists || post.data().ownerUserId !== userId) {
-        sendJson(res, 403, { ok: false, message: "작성자만 삭제할 수 있습니다." });
+      if (!post.exists || post.data().isDeleted) {
+        sendJson(res, 404, { ok: false, message: "글을 찾을 수 없습니다." });
         return;
       }
 
+      assertPostPassword(post.data(), userId, payload);
       await postRef.update({
         isDeleted: true,
         deletedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -186,12 +280,16 @@ module.exports = async function handler(req, res) {
       });
       await recordEvent(db, userId, "post_deleted", "post", id);
       await syncStoryUnlocks(db, userId);
+      await rebuildPublicPostsCache(db, userId);
       sendJson(res, 200, { ok: true });
       return;
     }
 
     sendJson(res, 405, { ok: false, message: "지원하지 않는 요청입니다." });
   } catch (error) {
-    sendJson(res, 500, { ok: false, message: error.message });
+    if (error.statusCode === 429 && error.retryAfterSeconds) {
+      res.setHeader("Retry-After", String(error.retryAfterSeconds));
+    }
+    sendJson(res, error.statusCode || 500, { ok: false, message: error.message });
   }
 };

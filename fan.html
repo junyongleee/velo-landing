@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>V.E.L.O. FAN ZONE — 자유게시판</title>
   <meta name="description" content="V.E.L.O. 팬들이 자유롭게 글과 이미지를 남기는 팬존 자유게시판입니다." />
+  <script src="analytics.js?v=20260723-ga4"></script>
   <link rel="icon" type="image/png" href="assets/star.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20260725-restore" />
 </head>
 <body class="fan-page">
   <header class="hd fan-hd scrolled" id="hd">
@@ -18,12 +19,11 @@
       <a href="index.html#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
       <nav class="nav" id="nav">
         <a href="index.html#hero">홈</a>
-        <a href="index.html#notice">공지</a>
-        <a href="index.html#members">멤버</a>
+        <a href="index.html#game">게임 소개</a>
         <a href="story.html">스토리</a>
         <a href="fan.html" aria-current="page">팬존</a>
-        <a href="index.html#club">프로듀서 클럽</a>
-        <a href="#" data-launch-link="mvpTest">테스트 신청</a>
+        <a href="index.html#members">멤버</a>
+        <a href="index.html#club">테스트</a>
       </nav>
       <a href="#" class="btn btn-primary hd-cta" data-launch-link="producerClub">참여하기 <span class="btn-star">✦</span></a>
       <button class="nav-toggle" id="navToggle" aria-label="menu"><span></span><span></span><span></span></button>
@@ -39,8 +39,8 @@
       </div>
       <div class="community-card">
         <img src="assets/gem.png" alt="" />
-        <b>현재는 임시 게시판</b>
-        <p>이 브라우저에 글이 저장됩니다. 실제 공개 운영은 로그인/DB 연결이 필요합니다.</p>
+        <b>비밀번호로 관리되는 팬존</b>
+        <p>로그인 없이 글을 남기고, 작성 시 입력한 비밀번호로 수정하거나 삭제할 수 있습니다.</p>
       </div>
     </section>
 
@@ -92,19 +92,23 @@
           </label>
         </div>
         <label>
+          <span>수정/삭제 비밀번호</span>
+          <input id="postPassword" type="password" required autocomplete="new-password" placeholder="이 글을 수정하거나 삭제할 때 사용할 비밀번호" />
+        </label>
+        <label>
           <span>내용</span>
           <textarea id="postBody" rows="10" required placeholder="상세 글은 글을 눌렀을 때만 보입니다."></textarea>
         </label>
         <label class="image-field">
           <span>이미지 첨부</span>
           <input id="postImage" type="file" accept="image/*" />
-          <small>임시 게시판에서는 이미지 1장을 브라우저에 저장합니다.</small>
+          <small>이미지는 1장까지 첨부할 수 있습니다.</small>
         </label>
         <div class="image-preview hidden" id="imagePreviewWrap">
           <img id="imagePreview" src="assets/gem.png" alt="첨부 이미지 미리보기" />
           <button class="btn btn-ghost" type="button" id="removeImage">이미지 제거</button>
         </div>
-        <p class="editor-note">수정/삭제 버튼은 이 브라우저에서 작성한 글에만 표시됩니다.</p>
+        <p class="editor-note">별도 로그인 없이, 작성 시 입력한 비밀번호가 맞으면 수정/삭제할 수 있습니다.</p>
         <div class="editor-actions">
           <button class="btn btn-ghost" type="button" data-action="list">취소</button>
           <button class="btn btn-primary" type="submit">저장하기</button>
@@ -130,8 +134,8 @@
     </div>
   </footer>
 
-  <script src="api-client.js"></script>
-  <script src="script.js"></script>
-  <script src="fan.js"></script>
+  <script src="api-client.js?v=20260710-view-entry"></script>
+  <script src="script.js?v=20260722-hide-mvp-count"></script>
+  <script src="fan.js?v=20260706-auto-migrate"></script>
 </body>
 </html>

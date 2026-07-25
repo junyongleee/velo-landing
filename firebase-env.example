@@ -3,3 +3,4 @@ FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-firebase-project-id.iam.gserv
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 FIREBASE_STORAGE_BUCKET=your-firebase-project-id.appspot.com
 VELO_SESSION_SECRET=make-a-long-random-secret
+VELO_ADMIN_TOKEN=make-another-long-random-admin-token

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>V.E.L.O. Metrics</title>
+  <link rel="stylesheet" href="styles.css?v=20260725-restore" />
+</head>
+<body class="metrics-page">
+  <main class="metrics-shell">
+    <section class="metrics-hero">
+      <div>
+        <span class="eyebrow">ADMIN METRICS</span>
+        <h1>V.E.L.O. 지표</h1>
+      </div>
+      <a class="btn btn-ghost" href="index.html">홈으로</a>
+    </section>
+
+    <section class="metrics-auth" id="metricsAuth">
+      <input id="adminTokenInput" type="password" placeholder="관리자 토큰" autocomplete="off" />
+      <button class="btn btn-primary" id="loadMetricsBtn" type="button">불러오기</button>
+    </section>
+
+    <p class="metrics-message" id="metricsMessage" aria-live="polite"></p>
+
+    <section class="metrics-grid" id="metricsTotals"></section>
+
+    <section class="metrics-section">
+      <h2>멤버 하트</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="memberMetricsTable"></table>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <h2>스토리 조회 / 좋아요</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="storyMetricsTable"></table>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <h2>페이지 조회</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="pageMetricsTable"></table>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <h2>페이지별 활성 체류 시간</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="pageEngagementTable"></table>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <h2>이벤트</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="eventMetricsTable"></table>
+      </div>
+    </section>
+
+    <section class="metrics-section">
+      <h2>최근 참여</h2>
+      <div class="metrics-table-wrap">
+        <table class="metrics-table" id="signupMetricsTable"></table>
+      </div>
+    </section>
+  </main>
+
+  <script src="admin-metrics.js?v=20260721-engagement"></script>
+</body>
+</html>

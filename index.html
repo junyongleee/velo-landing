@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>V.E.L.O. — 오컬트 아이돌 프로듀싱 리듬게임</title>
-  <meta name="description" content="잘못된 선택을 하면, 이야기는 처음으로 되돌아간다. 오컬트 아이돌 프로듀싱 리듬게임 V.E.L.O. 데뷔 전 초기 프로듀서를 모집합니다." />
+  <title>V.E.L.O. — PC 스토리 리듬게임</title>
+  <meta name="description" content="V.E.L.O.는 스토리를 읽고, 자정의 LIVE를 6키 리듬게임으로 클리어하며 한 주의 스케줄을 수행해 다음 스토리를 여는 PC 기반 캐릭터 IP 리듬게임입니다." />
+  <script src="analytics.js?v=20260723-ga4"></script>
   <link rel="icon" type="image/png" href="assets/star.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=20260725-restore" />
 </head>
 <body>
 
@@ -20,14 +21,13 @@
       <a href="#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
       <nav class="nav" id="nav">
         <a href="#hero">홈</a>
-        <a href="#notice">공지</a>
-        <a href="#members">멤버</a>
+        <a href="#game">게임 소개</a>
         <a href="story.html">스토리</a>
         <a href="fan.html">팬존</a>
-        <a href="#club">프로듀서 클럽</a>
-        <a href="#" data-launch-link="mvpTest">테스트 신청</a>
+        <a href="#members">멤버</a>
+        <a href="#club">테스트</a>
       </nav>
-      <a href="#" class="btn btn-primary hd-cta" data-launch-link="producerClub">참여하기 <span class="btn-star">✦</span></a>
+      <a href="#" class="btn btn-primary hd-cta" data-launch-link="producerClub">MVP 데모 알림 <span class="btn-star">✦</span></a>
       <button class="nav-toggle" id="navToggle" aria-label="menu"><span></span><span></span><span></span></button>
     </div>
   </header>
@@ -46,11 +46,11 @@
       <div class="hero-wrap">
         <div class="hero-copy">
           <h1 class="hero-logo">V.E.L.O.</h1>
-          <p class="hero-core">잘못된 선택은,<br><em>이야기를 처음으로 되돌리다.</em></p>
+          <p class="hero-core">리듬게임 플레이로<br>다섯 아이돌의 다음 이야기를 열어가는<br><em>스토리 해금형 아이돌 리듬게임</em></p>
           <p class="hero-sub"><img src="assets/star.png" alt="" class="sub-star">오컬트 아이돌 프로듀싱 리듬게임</p>
           <div class="hero-cta">
-            <a href="#" class="btn btn-primary" data-launch-link="producerClub">초기 프로듀서 참여하기 <span class="btn-star">✦</span></a>
-            <a href="story.html" class="btn btn-ghost">프롤로그 읽기</a>
+            <a href="#" class="btn btn-primary" data-launch-link="producerClub">MVP 데모 알림 받기 <span class="btn-star">✦</span></a>
+            <a href="#game" class="btn btn-ghost">플레이 방식 보기</a>
           </div>
         </div>
 
@@ -65,81 +65,83 @@
       </div>
     </section>
 
-    <!-- ============ NOTICE + VOTE ============ -->
-    <section class="section split" id="notice">
-      <div class="split-grid">
-        <!-- 공지 -->
-        <div class="notice-col">
-          <div class="block-head">
-            <h2><img src="assets/star.png" class="head-star" alt="">공지 / 업데이트</h2>
-            <a href="#notice" class="more">+ 더보기</a>
-          </div>
-          <div class="notice-list">
-            <article class="ncard">
-              <span class="nc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 001 1h2l5 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M16 8a5 5 0 010 8M19 5a9 9 0 010 14"/></svg></span>
-              <time>2026.07.15</time>
-              <p>1차 MVP 테스트 신청 오픈 예정</p>
-            </article>
-            <article class="ncard">
-              <span class="nc-ic gem"><img src="assets/gem.png" alt=""></span>
-              <time>2026.07.05</time>
-              <p>첫 번째 멤버 티저 공개</p>
-            </article>
-            <article class="ncard">
-              <span class="nc-ic"><img src="assets/star.png" alt=""></span>
-              <time>2026.06.28</time>
-              <p>초기 프로듀서 모집 시작</p>
-            </article>
-          </div>
+    <!-- ============ GAME OVERVIEW ============ -->
+    <section class="section game-overview" id="game">
+      <div class="game-head">
+        <div>
+          <span class="eyebrow"><img src="assets/star.png" alt="">WHAT YOU PLAY</span>
+          <h2>어떤 게임인가요?</h2>
+          <p class="sec-desc">V.E.L.O.는 스토리를 읽고, 자정의 LIVE를 6키 리듬게임으로 클리어하며 한 주의 스케줄을 수행해 다음 스토리를 여는 PC 기반 캐릭터 IP 리듬게임입니다.</p>
         </div>
-
-        <!-- 선택지 투표 -->
-        <div class="vote-col" id="story">
-          <div class="block-head">
-            <h2><img src="assets/star.png" class="head-star" alt="">이번 주 선택지 투표</h2>
-          </div>
-          <div class="vote-card">
-            <p class="vote-q">공연 직전, 무대 뒤에서 들려오는 <em>알 수 없는 속삭임.</em><br>당신은 어떻게 하시겠습니까?</p>
-            <div class="vote-opts" id="voteOpts">
-              <button class="vopt" data-choice="A"><span class="vl">A</span><p>속삭임의 정체를<br>확인한다</p></button>
-              <button class="vopt" data-choice="B"><span class="vl">B</span><p>멤버들을 먼저<br>무대로 보낸다</p></button>
-              <button class="vopt" data-choice="C"><span class="vl">C</span><p>무시하고 평소처럼<br>무대에 선다</p></button>
-            </div>
-            <p class="vote-note" id="voteNote">정답은 스토리 속 단서에 숨어 있습니다. <em>잘못된 선택은 이야기를 처음으로 되돌립니다.</em></p>
-          </div>
-        </div>
+        <figure class="game-visual">
+          <img src="assets/preview-rhythm-game.png" alt="V.E.L.O. 리듬게임 플레이 화면">
+          <figcaption>AI로 제작한 인게임 화면 시안이며, 실제 개발 과정에서 변경될 수 있습니다.</figcaption>
+        </figure>
+      </div>
+      <div class="game-loop" aria-label="V.E.L.O. 플레이 루프">
+        <article class="game-step reveal">
+          <span class="step-no">01</span>
+          <h3>스토리 감상</h3>
+          <p>멤버들의 상황과 단서를 읽고, 다음 무대를 준비합니다.</p>
+        </article>
+        <span class="game-arrow" aria-hidden="true"></span>
+        <article class="game-step reveal">
+          <span class="step-no">02</span>
+          <h3>스케줄 진행</h3>
+          <p>스토리 감상과 LIVE 플레이를 한 주의 필수 일정으로 수행합니다.</p>
+        </article>
+        <span class="game-arrow" aria-hidden="true"></span>
+        <article class="game-step reveal">
+          <span class="step-no">03</span>
+          <h3>포토카드 편성</h3>
+          <p>리아, 미나, 서윤, 하나, 지우 카드를 한 장씩 골라 무대에 올립니다.</p>
+        </article>
+        <span class="game-arrow" aria-hidden="true"></span>
+        <article class="game-step reveal">
+          <span class="step-no">04</span>
+          <h3>리듬게임</h3>
+          <p>ASD JKL 입력으로 무대를 완성합니다. L키 귀신 LANE은 놓치면 즉시 실패합니다.</p>
+        </article>
+        <span class="game-arrow" aria-hidden="true"></span>
+        <article class="game-step reveal">
+          <span class="step-no">05</span>
+          <h3>스토리 해금</h3>
+          <p>결과와 보상을 확인하고, 주차 완료 후 새로운 스토리를 엽니다.</p>
+        </article>
       </div>
     </section>
 
-    <!-- ============ STORY PROLOGUE ============ -->
+    <!-- ============ PROLOGUE ============ -->
     <section class="section story-entry" id="prologue">
       <div class="block-head story-entry-title">
         <h2><img src="assets/star.png" class="head-star" alt="">프롤로그</h2>
       </div>
       <div class="story-entry-head">
         <div>
-          <h3>빛을 잃은 아이돌,<br>유령의 무대에 서다.</h3>
+          <h3>전 재산 7,420원,<br>유령 빌딩의 자정 무대.</h3>
         </div>
-        <p class="sec-desc">잊힌 아이돌들이 다시 노래하기 시작하는, V.E.L.O.의 첫 번째 이야기. 0~5화는 바로 열람 가능하고 6~7화는 팬존 감상글로 순차 해금됩니다.</p>
+        <p class="sec-desc">S-Tier에 짓밟힌 다섯 아이돌은 마지막 선택지로 0번지 유령 빌딩과 계약합니다. 매주 자정, 영령 관객 앞에서 무대를 증명하지 못하면 인간성까지 빼앗길 수 있습니다.</p>
       </div>
       <div class="story-entry-card">
         <div class="story-entry-copy">
-          <b>0화. 자정의 오페라</b>
-          <p>칠흑 같은 어둠 속, 산 자와 죽은 자 모두를 홀리는 무대를 시작하다.</p>
+          <b>빛을 잃은 아이돌은<br>유령의 무대에 선다</b>
+          <p>당신은 멤버가 아니라 이들의 무대 복귀를 지켜보고 진행을 돕는 운영자입니다. 스토리의 단서를 따라가며 다음 LIVE를 준비하세요.</p>
           <div class="story-entry-actions">
-            <a href="story.html" class="btn btn-primary">프롤로그 전체 보기</a>
-            <a href="story.html?episode=0" class="btn btn-ghost">0화부터 읽기</a>
+            <a href="story.html" class="btn btn-primary">프롤로그 읽기</a>
+            <a href="story.html?episode=0" class="btn btn-ghost">0화부터 보기</a>
           </div>
         </div>
-        <div class="story-mini-list" aria-label="프롤로그 회차">
-          <span>0화. 자정의 오페라</span>
-          <span>1화. 암전</span>
-          <span>2화. 빨간 딱지</span>
-          <span>3화. 완전히 끊어진 동아줄</span>
-          <span>4화. 보랏빛 안개</span>
-          <span>5화. 핏빛 협상</span>
-          <span class="locked">6화. 어설픈 사기꾼과 정직한 절망</span>
-          <span class="locked">7화. 오전의 빛과 미련의 매장</span>
+        <div class="story-entry-side">
+          <figure class="story-entry-visual">
+            <img src="assets/preview-story-game.png" alt="V.E.L.O. 프롤로그 스토리 화면">
+            <figcaption>AI로 제작한 스토리 화면 시안이며, 실제 개발 과정에서 변경될 수 있습니다.</figcaption>
+          </figure>
+          <div class="story-mini-list story-beats" aria-label="스토리 핵심">
+            <span>S-Tier 방출과 데뷔 무대 실패</span>
+            <span>잔고 7,420원으로 맺은 계약</span>
+            <span>0번지 유령 빌딩의 심야 공연</span>
+            <span>실패하면 인간성까지 징수되는 무대</span>
+          </div>
         </div>
       </div>
     </section>
@@ -153,7 +155,7 @@
         <div>
           <h2>다섯 명의 아이돌,<br>꺼진 무대 위에서 다시 빛나기 시작하다.</h2>
         </div>
-        <p class="sec-desc">완벽하지 않아서 더 빛나는 다섯 명.<br>당신은 그들이 다시 무대에 오르는 순간을 목격하다.</p>
+        <p class="sec-desc">완벽하지 않아서 더 빛나는 다섯 명.<br>당신은 그들이 다시 무대에 오르는 순간을 목격합니다.</p>
       </div>
       <div class="member-grid" id="memberGrid"></div>
     </section>
@@ -164,20 +166,20 @@
         <div class="club-left">
           <img class="club-sigil" src="assets/gem.png" alt="" />
           <div class="club-body">
-            <span class="eyebrow"><img src="assets/star.png" alt="">PRODUCER CLUB</span>
-            <h2>정식 출시 전,<br>초기 프로듀서로 먼저 함께하다</h2>
-            <p>V.E.L.O.의 여정을 가장 가까이에서 함께할 초기 프로듀서를 모집합니다. 여러분의 선택과 응원이 이야기를 완성합니다.</p>
+            <span class="eyebrow"><img src="assets/star.png" alt="">MVP TEST</span>
+            <h2>MVP 데모가 열리면<br>가장 먼저 플레이해보세요</h2>
+            <p>정식 출시 전, 스토리 해금 루프와 리듬게임 판정감을 먼저 확인할 테스트 플레이어를 모집합니다.</p>
             <ul class="club-perks">
-              <li><i></i>개발 소식 선공개</li>
-              <li><i></i>선택지 · 멤버 투표 참여</li>
-              <li><i></i>MVP 테스트 우선 초대</li>
-              <li><i></i>정식 공개 시 가장 먼저 안내</li>
+              <li><i></i>MVP 데모 오픈 우선 안내</li>
+              <li><i></i>리듬게임 판정감 피드백 참여</li>
+              <li><i></i>멤버 · 스토리 투표 참여</li>
+              <li><i></i>전시 · 정식 공개 소식 선공개</li>
             </ul>
           </div>
         </div>
         <a href="#" class="club-cta" data-launch-link="producerClub">
           <img src="assets/gem.png" alt="" />
-          <b>프로듀서 클럽<br>참여하기</b>
+          <b>MVP 데모<br>알림 받기</b>
           <span class="cta-arrow">→</span>
         </a>
       </div>
@@ -190,8 +192,8 @@
       </div>
       <div class="fan-layout">
         <div class="fan-intro">
-          <h2>팬과 함께<br>이야기를 완성하다</h2>
-          <p class="sec-desc">자유게시판에서 멤버 이야기, 세계관 해석, 팬아트, 2차 창작을 함께 나눌 수 있어요.</p>
+          <h2>플레이 후에는<br>세계관을 함께 파고들다</h2>
+          <p class="sec-desc">게임의 루프와 스토리를 이해한 뒤, 팬존에서 멤버 해석, 단서 추측, 팬아트와 2차 창작을 함께 나눌 수 있어요.</p>
           <a href="fan.html" class="btn btn-ghost">팬존 입장하기</a>
         </div>
         <div class="fan-list">
@@ -217,33 +219,6 @@
       </div>
     </section>
 
-    <!-- ============ GAMEPLAY PREVIEW ============ -->
-    <section class="section preview" id="preview">
-      <div class="sec-head"><span class="eyebrow"><img src="assets/star.png" alt="">GAMEPLAY</span><h2>게임 플레이 미리보기</h2></div>
-      <div class="preview-grid">
-        <article class="pcard">
-          <div class="pc-img" style="background-image:url('assets/preview-story.jpg')"><span class="pc-tag">STORY</span></div>
-          <div class="pc-body"><h3>스토리</h3><p>타임루프가 얽힌 오컬트 스토리를 감상하세요.</p></div>
-        </article>
-        <article class="pcard">
-          <div class="pc-img" style="background-image:url('assets/preview-schedule-office.png')"><span class="pc-tag">SCHEDULE</span></div>
-          <div class="pc-body"><h3>스케줄</h3><p>연습 · 방송 · 미팅 등 일주일을 직접 관리해요.</p></div>
-        </article>
-        <article class="pcard">
-          <div class="pc-img" style="background-image:url('assets/preview-live.jpg')"><span class="pc-tag">LIVE</span></div>
-          <div class="pc-body"><h3>LIVE</h3><p>리듬게임으로 무대를 완성하세요.</p></div>
-        </article>
-      </div>
-      <div class="loop">
-        <span>스토리</span><i></i><span>선택</span><i></i><span>스케줄</span><i></i><span>LIVE</span><i></i><span>보상</span><i></i><span class="loop-last">다음 스토리 해금</span>
-      </div>
-    </section>
-
-    <!-- ============ DEV LOG ============ -->
-    <section class="section devlog" id="devlog">
-      <div class="sec-head"><span class="eyebrow"><img src="assets/star.png" alt="">DEV LOG</span><h2>개발 소식</h2></div>
-      <div class="dev-grid" id="devGrid"></div>
-    </section>
   </main>
 
   <!-- ================= FOOTER ================= -->
@@ -251,7 +226,7 @@
     <div class="ft-top">
       <div class="ft-brand">
         <a href="#hero" class="logo"><img class="logo-star" src="assets/star.png" alt=""><span class="logo-text">V.E.L.O.</span></a>
-        <p class="ft-tag">오컬트 아이돌 프로듀싱 리듬게임</p>
+        <p class="ft-tag">PC 스토리 리듬게임</p>
       </div>
       <div class="ft-mid">
         <p class="ft-q">유튜버 / 동아리 / 리뷰어 / 테스터 문의</p>
@@ -265,7 +240,21 @@
     </div>
   </footer>
 
-  <script src="api-client.js"></script>
-  <script src="script.js"></script>
+  <div class="velo-modal hidden" id="participationModal" aria-hidden="true">
+    <div class="velo-modal-backdrop" data-close-modal></div>
+    <div class="velo-modal-panel" role="dialog" aria-labelledby="participationTitle">
+      <button class="velo-modal-close" type="button" data-close-modal aria-label="닫기">×</button>
+      <h2 id="participationTitle">MVP 데모 알림을 받을까요?</h2>
+      <p class="velo-modal-desc">테스트 오픈 소식을 받을 이메일 또는 전화번호를 남겨주세요.</p>
+      <form id="participationForm">
+        <input type="text" id="participationContact" name="contact" placeholder="이메일 또는 전화번호" autocomplete="email" required />
+        <button type="submit" class="btn btn-primary">알림 신청하기 <span class="btn-star">✦</span></button>
+      </form>
+      <p class="velo-modal-msg hidden" id="participationMsg"></p>
+    </div>
+  </div>
+
+  <script src="api-client.js?v=20260721-engagement"></script>
+  <script src="script.js?v=20260722-hide-mvp-count"></script>
 </body>
 </html>

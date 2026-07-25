@@ -91,7 +91,7 @@ em { font-style: normal; }
 .hero-logo { font-family: var(--serif); font-weight: 600; font-size: clamp(3.6rem, 8vw, 6.6rem); line-height: .95; letter-spacing: .04em;
   background: linear-gradient(180deg, #5a3aa0, #8a64d8 60%, #b89af0); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
   filter: drop-shadow(0 6px 22px rgba(140,100,220,0.22)); }
-.hero-core { font-family: var(--sans); font-size: clamp(1.45rem, 2.7vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.4; margin-top: 1.4rem; color: var(--ink); }
+.hero-core { font-family: var(--sans); font-size: clamp(1.25rem, 2.2vw, 1.85rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.45; margin-top: 1.4rem; color: var(--ink); word-break: keep-all; }
 .hero-core em { color: var(--purple); }
 .hero-sub { display: flex; align-items: center; gap: .5rem; font-size: .96rem; font-weight: 600; color: var(--purple); margin-top: 1.2rem; letter-spacing: .02em; }
 .sub-star { width: 1.1rem; height: 1.1rem; }
@@ -103,11 +103,12 @@ em { font-style: normal; }
   background: radial-gradient(circle, rgba(244,238,255,0.85), rgba(231,222,250,0.2) 55%, transparent 70%); }
 .cast { position: absolute; bottom: -2vh; width: auto; object-fit: contain; object-position: bottom;
   transition: transform .5s cubic-bezier(.2,.8,.2,1); }
-.c-ria    { height: 92vh; left: 50%; transform: translateX(-50%); z-index: 6; }
-.c-mina   { height: 80vh; left: 30%; transform: translateX(-50%); z-index: 7; }
-.c-jiwu   { height: 78vh; left: 66.5%; transform: translateX(-50%); z-index: 7; }
-.c-hana   { height: 86vh; left: 13%; transform: translateX(-50%); z-index: 4; }
-.c-seoyun { height: 82vh; left: 88%; transform: translateX(-50%); z-index: 4; }
+/* 실제 설정 키(하나171·리아168·서윤165·미나161·지우157cm) 비율에 맞춘 높이 */
+.c-ria    { height: 90.4vh; left: 50%; transform: translateX(-50%); z-index: 6; }
+.c-mina   { height: 86.6vh; left: 30%; transform: translateX(-50%); z-index: 7; }
+.c-jiwu   { height: 84.5vh; left: 64%; transform: translateX(-50%); z-index: 7; }
+.c-hana   { height: 92vh; left: 13%; transform: translateX(-50%); z-index: 4; }
+.c-seoyun { height: 88.8vh; left: 88%; transform: translateX(-50%); z-index: 4; }
 
 /* ============================================================ NOTICE + VOTE */
 .split { background: var(--bg); }
@@ -164,9 +165,10 @@ em { font-style: normal; }
 .mc-foot { display: flex; gap: .5rem; }
 .mc-btn { flex: 1; cursor: pointer; font-family: var(--sans); font-size: .84rem; font-weight: 700; color: var(--purple); background: var(--lav-bg); border: none; border-radius: 11px; padding: .7rem; transition: background .2s, color .2s; }
 .mcard:hover .mc-btn { background: var(--purple); color: #fff; }
-.mc-heart { width: 2.6rem; flex: none; cursor: pointer; display: grid; place-items: center; border-radius: 11px; color: var(--ink-3); background: var(--lav-bg); border: none; transition: all .2s; }
-.mc-heart.on { color: #fff; background: #ef7aa8; }
-.mc-heart svg { width: 1.1rem; height: 1.1rem; }
+.mc-heart { min-width: 2.6rem; flex: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: .2rem; border-radius: 11px; color: var(--ink-3); background: var(--lav-bg); border: 1px solid transparent; padding: .7rem .55rem; transition: all .2s; }
+.mc-heart.on { color: var(--ink); background: #fff0f3; border-color: #ffb3c1; }
+.heart-symbol { display: inline-flex; align-items: center; justify-content: center; flex: none; color: #ef233c; font-size: 1.08rem; line-height: 1; font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; }
+.mc-heart-count { font-size: .78rem; font-weight: 800; line-height: 1; min-width: .8rem; }
 
 /* ============================================================ PRODUCER CLUB */
 .club { background: var(--bg); }
@@ -201,7 +203,7 @@ em { font-style: normal; }
 .fc-go { display: inline-flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 700; color: var(--purple); margin-top: 1.2rem; }
 .fc-go i { width: .42rem; height: .42rem; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); }
 
-/* ============================================================ GAMEPLAY PREVIEW */
+/* ============================================================ PREVIEW CARD BASE */
 .preview { background: var(--bg); }
 .preview-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
 .pcard { border-radius: 22px; overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-s); transition: transform .28s, box-shadow .28s; }
@@ -259,7 +261,7 @@ em { font-style: normal; }
   .hero-copy { padding-top: 7rem; text-align: center; }
   .hero-sub { justify-content: center; } .hero-cta { justify-content: center; }
   .hero-cast { height: 56vh; }
-  .c-ria { height: 54vh; } .c-mina,.c-jiwu { height: 47vh; } .c-hana,.c-seoyun { height: 50vh; }
+  .c-ria { height: 53.1vh; } .c-mina { height: 50.8vh; } .c-jiwu { height: 49.6vh; } .c-hana { height: 54vh; } .c-seoyun { height: 52.1vh; }
   .split-grid { grid-template-columns: 1fr; }
   .member-grid { grid-template-columns: repeat(3, 1fr); }
   .dev-grid { grid-template-columns: repeat(2, 1fr); }
@@ -301,7 +303,7 @@ em { font-style: normal; }
 .loop .loop-last { background: var(--purple); }
 .dc-check { background: var(--purple); }
 .club-perks i { background: var(--purple); }
-.mc-heart.on { background: var(--purple); color: #fff; }
+.mc-heart.on { background: #fff0f3; color: var(--ink); border-color: #ffb3c1; }
 
 /* 섹션 배경: 화이트 / 연그레이 교차 (무채색) */
 .split, .club, .preview, .members, .fan, .devlog { background: #ffffff; }
@@ -343,7 +345,7 @@ em { font-style: normal; }
 .mc-kw { margin: .75rem 0; }
 .mc-line { font-size: .88rem; padding: .7rem 0; margin-bottom: .9rem; }
 .mc-btn { padding: .62rem; font-size: .82rem; }
-.mc-heart { width: 2.4rem; }
+.mc-heart { min-width: 2.4rem; padding: .62rem .5rem; }
 
 /* ---- 게임 미리보기: 블랙 섹션 (강한 대비) ---- */
 .preview { background: #141019 !important; }
@@ -385,15 +387,15 @@ em { font-style: normal; }
 /* ============================================================
    홈 프롤로그 진입 섹션
    ============================================================ */
-.story-entry { background: #fff; }
-.story-entry-title { margin-bottom: 1.8rem; }
+.story-entry { background: #fff; padding-top: 5.4rem; padding-bottom: 5.4rem; }
+.story-entry-title { margin-bottom: 1.25rem; }
 .section-title { margin-bottom: 2rem; }
-.story-entry-head { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; align-items: end; margin-bottom: 2.2rem; }
-.story-entry-head h3 { font-size: clamp(1.9rem, 3.8vw, 3rem); line-height: 1.18; letter-spacing: -0.04em; margin: 0; }
+.story-entry-head { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; align-items: end; margin-bottom: 1.45rem; }
+.story-entry-head h3 { font-size: clamp(1.8rem, 3.4vw, 2.7rem); line-height: 1.18; letter-spacing: -0.04em; margin: 0; }
 .story-entry-head .sec-desc { margin: 0; }
-.story-entry-card { display: grid; grid-template-columns: .9fr 1.1fr; gap: 2rem; padding: 2.2rem; border-radius: 30px; background: linear-gradient(135deg, #f8f7fb, #fff); border: 1px solid var(--line); box-shadow: var(--shadow-m); }
-.story-entry-copy { display: flex; flex-direction: column; justify-content: center; min-height: 280px; }
-.story-entry-copy b { font-size: clamp(1.45rem, 3vw, 2.25rem); letter-spacing: -0.04em; }
+.story-entry-card { display: grid; grid-template-columns: .78fr 1fr; gap: 1.35rem; align-items: center; padding: 1.35rem; border-radius: 24px; background: linear-gradient(135deg, #f8f7fb, #fff); border: 1px solid var(--line); box-shadow: var(--shadow-m); }
+.story-entry-copy { display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+.story-entry-copy b { font-size: clamp(1.4rem, 2.6vw, 2rem); letter-spacing: -0.04em; }
 .story-entry-copy p { color: var(--ink-2); margin: 1rem 0 1.5rem; line-height: 1.75; }
 .story-entry-actions { display: flex; gap: .7rem; flex-wrap: wrap; }
 .story-mini-list { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
@@ -442,6 +444,7 @@ em { font-style: normal; }
 .detail-body { padding: 1.7rem 0; color: var(--ink); font-size: 1.05rem; line-height: 1.9; white-space: normal; }
 .detail-actions { justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--line); }
 .detail-actions p, .editor-note { color: var(--ink-3); font-size: .9rem; }
+.admin-tools-label { display: inline-flex; align-items: center; padding: .55rem .75rem; border-radius: 999px; background: #161320; color: #fff; font-size: .78rem; font-weight: 900; }
 .danger { color: #b83555; border-color: #f0c8d2; }
 .post-editor label { display: flex; flex-direction: column; gap: .45rem; margin-bottom: 1rem; color: var(--ink); font-weight: 800; }
 .post-editor input, .post-editor select, .post-editor textarea { width: 100%; border: 1px solid var(--line-2); border-radius: 18px; padding: .95rem 1rem; background: #fff; color: var(--ink); font: inherit; outline: none; transition: border-color .2s, box-shadow .2s; }
@@ -455,7 +458,7 @@ em { font-style: normal; }
 .fan-ft { margin-top: 0; }
 
 /* ============================================================
-   프롤로그 웹소설
+   프롤로그 대본
    ============================================================ */
 .story-page { background: #f5f3f8; }
 .story-main { padding-top: 76px; }
@@ -480,10 +483,10 @@ em { font-style: normal; }
 .novel-flow { display: flex; flex-direction: column; gap: 1.4rem; }
 .novel-flow h2 { margin: 1.8rem 0 .4rem; padding-top: 1.4rem; border-top: 1px solid var(--line-2); font-size: 1.05rem; color: var(--purple); letter-spacing: .02em; }
 .novel-meta { display: inline-flex; width: fit-content; padding: .45rem .8rem; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink-3); font-size: .84rem; }
-.novel-narration { color: var(--ink); font-size: 1.04rem; line-height: 2.05; word-break: keep-all; }
-.novel-line { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 1.2rem; align-items: start; padding: .3rem 0; }
-.novel-line strong { color: var(--purple); font-size: .98rem; line-height: 1.9; white-space: normal; word-break: keep-all; }
-.novel-line p { min-width: 0; color: var(--ink); font-size: 1.02rem; line-height: 1.9; white-space: normal; overflow: visible; word-break: keep-all; }
+.novel-narration { color: var(--ink); font-size: 1.04rem; line-height: 2.05; text-indent: 0; text-align: left; word-break: keep-all; }
+.novel-line { display: grid; grid-template-columns: 6rem minmax(0, 1fr); column-gap: 3.25rem; align-items: start; margin-left: 0; padding: .3rem 0; text-align: left; }
+.novel-line strong { display: block; color: var(--purple); font-size: .98rem; line-height: 1.9; white-space: nowrap; word-break: keep-all; }
+.novel-line p { min-width: 0; margin: 0; color: var(--ink); font-size: 1.02rem; line-height: 1.9; text-align: left; white-space: normal; overflow: visible; word-break: keep-all; }
 
 @media (max-width: 1080px) {
   .mem-head { grid-template-columns: 1fr; gap: .8rem; }
@@ -515,8 +518,7 @@ em { font-style: normal; }
   .image-preview img { width: 100%; max-height: 220px; }
   .story-hero { padding-top: 5rem; }
   .story-mini-list { grid-template-columns: 1fr; }
-  .novel-line { grid-template-columns: 1fr; }
-  .novel-line strong { grid-row: auto; }
+  .novel-line { grid-template-columns: 5.2rem minmax(0, 1fr); column-gap: 1.1rem; margin-left: 0; }
   .story-side-nav { inset: auto 1rem 1rem; display: flex; justify-content: space-between; gap: .75rem; }
   .story-side-btn { position: static; min-width: 0; flex: 1; padding: .78rem .8rem; font-size: .86rem; transform: none; }
   .story-side-btn:hover { transform: translateY(-2px); }
@@ -531,3 +533,100 @@ em { font-style: normal; }
 .mc-img { position: absolute; left: 50%; bottom: 0; top: auto; transform: translateX(-50%);
   height: 100%; width: 100%; max-width: none; object-fit: contain; object-position: center bottom; }
 .mcard:hover .mc-img { transform: translateX(-50%) scale(1.04); }
+
+/* ============================================================
+   참여하기 모달 / 집계 UI
+   ============================================================ */
+body.modal-open { overflow: hidden; }
+.velo-modal { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 1.2rem; }
+.velo-modal.hidden { display: none; }
+.velo-modal-backdrop { position: absolute; inset: 0; background: rgba(22,19,32,.48); backdrop-filter: blur(6px); }
+.velo-modal-panel { position: relative; width: min(100%, 28rem); padding: 2rem 1.8rem 1.6rem; border-radius: 24px; background: #fff; border: 1px solid var(--line-2); box-shadow: var(--shadow-l); }
+.velo-modal-close { position: absolute; top: .9rem; right: .9rem; width: 2rem; height: 2rem; border: 0; border-radius: 999px; background: var(--lav-bg); color: var(--ink-2); font-size: 1.3rem; line-height: 1; cursor: pointer; }
+.velo-modal-panel h2 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: .6rem; }
+.velo-modal-desc { color: var(--ink-2); font-size: .95rem; line-height: 1.6; margin-bottom: 1.2rem; }
+.velo-modal-panel form { display: flex; flex-direction: column; gap: .75rem; }
+.velo-modal-panel input { width: 100%; padding: .95rem 1rem; border: 1px solid var(--line-2); border-radius: 14px; font: inherit; color: var(--ink); background: #fff; }
+.velo-modal-panel input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(106,63,176,.12); }
+.velo-modal-msg { margin-top: .8rem; padding: .75rem .9rem; border-radius: 12px; background: var(--lav-bg); color: var(--purple); font-size: .9rem; font-weight: 600; text-align: center; }
+.velo-modal-msg.hidden { display: none; }
+
+.episode-meta { display: inline-flex; align-items: center; gap: .55rem; flex: none; }
+.episode-views { font-style: normal; font-size: .82rem; font-weight: 700; color: var(--ink-3); white-space: nowrap; }
+.novel-top-stats { color: var(--ink-3); font-size: .88rem; font-weight: 700; white-space: nowrap; }
+.story-like-bar { display: flex; justify-content: center; margin: 2.5rem 0 1rem; }
+.story-like-btn { display: inline-flex; align-items: center; gap: .55rem; padding: .85rem 1.25rem; border: 1px solid var(--line-2); border-radius: 999px; background: #fff; color: var(--ink-2); font: inherit; font-weight: 700; cursor: pointer; box-shadow: var(--shadow-s); transition: transform .2s, background .2s, color .2s, border-color .2s; }
+.story-like-btn .heart-symbol { font-size: 1.12rem; }
+.story-like-btn.on { background: #fff0f3; border-color: #ffb3c1; color: var(--ink); }
+.story-like-btn:hover { transform: translateY(-2px); }
+.story-like-count { font-size: .88rem; font-weight: 800; }
+
+/* ============================================================
+   랜딩 메시지 개편 — 게임 루프 우선 노출
+   ============================================================ */
+.game-overview { background: #fff; padding-top: 5rem; padding-bottom: 5rem; }
+.game-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 400px); gap: 1.8rem; align-items: center; margin-bottom: 1.85rem; }
+.game-head h2 { font-size: clamp(2rem, 4vw, 3.2rem); line-height: 1.1; letter-spacing: -0.05em; margin-top: .7rem; }
+.game-head .sec-desc { margin-top: 1.4rem; max-width: 62ch; font-size: 1.05rem; line-height: 1.75; }
+.game-visual { justify-self: end; width: 100%; max-width: 400px; margin: 0; border-radius: 18px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); background: #141019; box-shadow: var(--shadow-m); }
+.game-visual img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.game-visual figcaption,
+.story-entry-visual figcaption { padding: .45rem .7rem .55rem; background: #fff; color: var(--ink-3); font-size: .72rem; font-weight: 700; line-height: 1.45; word-break: keep-all; }
+.game-loop { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr); gap: .55rem; align-items: center; }
+.game-step { position: relative; min-height: 170px; padding: 1.05rem .95rem; border: 1px solid var(--line); border-radius: 18px; background: #faf9fc; overflow: hidden; }
+.game-step::after { content: ""; position: absolute; right: 1rem; bottom: 1rem; width: 2.2rem; height: 1px; background: var(--line-2); }
+.game-arrow { display: block; width: .72rem; height: .72rem; border-top: 2px solid var(--purple); border-right: 2px solid var(--purple); transform: rotate(45deg); opacity: .86; }
+.step-no { display: inline-flex; align-items: center; justify-content: center; width: 2.4rem; height: 2.4rem; border-radius: 50%; background: var(--purple); color: #fff; font-family: var(--label); font-size: .78rem; font-weight: 900; }
+.game-step h3 { margin-top: 1.2rem; font-size: 1.08rem; font-weight: 900; letter-spacing: -0.03em; }
+.game-step p { margin-top: .55rem; color: var(--ink-2); font-size: .9rem; line-height: 1.62; word-break: keep-all; }
+
+.pc-body p { word-break: keep-all; }
+
+.story-entry-side { display: flex; flex-direction: column; gap: .8rem; min-width: 0; }
+.story-entry-visual { align-self: end; width: 100%; max-width: 440px; margin: 0; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); background: #141019; box-shadow: var(--shadow-s); }
+.story-entry-visual img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.story-beats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.story-beats span { min-height: 3.05rem; padding: .75rem .85rem; font-size: .9rem; }
+.story-beats span::before { content: ""; width: .5rem; height: .5rem; margin-right: .75rem; border-radius: 50%; background: var(--purple); flex: none; }
+.story-beats .locked::after { display: none; }
+
+@media (max-width: 900px) {
+  .game-loop { grid-template-columns: repeat(2, 1fr); }
+  .game-arrow { display: none; }
+}
+
+@media (max-width: 720px) {
+  .game-head { grid-template-columns: 1fr; gap: .8rem; text-align: left; }
+  .game-head .sec-desc { margin-top: .2rem; }
+  .game-loop { grid-template-columns: 1fr; }
+  .game-step { min-height: 0; }
+}
+
+/* ============================================================
+   ADMIN METRICS
+   ============================================================ */
+.metrics-page { background: #f7f6fa; }
+.metrics-shell { max-width: 1120px; margin: 0 auto; padding: 3rem 1.4rem 5rem; }
+.metrics-hero { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.metrics-hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; letter-spacing: -0.04em; margin-top: .4rem; }
+.metrics-auth { display: flex; gap: .7rem; align-items: center; padding: 1rem; border: 1px solid var(--line-2); border-radius: 18px; background: #fff; box-shadow: var(--shadow-s); }
+.metrics-auth input { flex: 1; min-width: 0; padding: .9rem 1rem; border: 1px solid var(--line-2); border-radius: 12px; font: inherit; }
+.metrics-auth input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(106,63,176,.12); }
+.metrics-message { min-height: 1.5rem; margin: 1rem 0 1.4rem; color: var(--ink-2); font-weight: 700; }
+.metrics-message.error { color: #b3261e; }
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .9rem; margin-bottom: 1.6rem; }
+.metrics-card { padding: 1.2rem; border: 1px solid var(--line-2); border-radius: 18px; background: #fff; box-shadow: var(--shadow-s); }
+.metrics-card span { display: block; color: var(--ink-3); font-size: .86rem; font-weight: 800; }
+.metrics-card strong { display: block; margin-top: .35rem; font-size: 2rem; line-height: 1; color: var(--purple); }
+.metrics-section { margin-top: 1.3rem; padding: 1.2rem; border: 1px solid var(--line-2); border-radius: 18px; background: #fff; box-shadow: var(--shadow-s); }
+.metrics-section h2 { font-size: 1.1rem; margin-bottom: .9rem; }
+.metrics-table-wrap { overflow-x: auto; }
+.metrics-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.metrics-table th, .metrics-table td { padding: .75rem .7rem; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.metrics-table th { color: var(--ink-3); font-size: .8rem; font-weight: 900; }
+.metrics-table td { color: var(--ink); }
+
+@media (max-width: 720px) {
+  .metrics-hero, .metrics-auth { align-items: stretch; flex-direction: column; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+}

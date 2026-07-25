@@ -1,7 +1,12 @@
 const POSTS_KEY = "veloFanPosts";
+const REMOTE_POSTS_CACHE_KEY = "veloRemotePostsCache";
+const MIGRATED_LOCAL_POSTS_KEY = "veloMigratedLocalPostIds";
+const REMOTE_POST_PASSWORDS_KEY = "veloRemotePostPasswords";
 const USER_KEY = "veloFanUserKey";
 const NAME_KEY = "veloFanAuthorName";
 const PENDING_UNLOCK_KEY = "veloPendingUnlockEpisode";
+const FAN_MAX_UNLOCKED_EPISODE_KEY = "veloMaxUnlockedEpisode";
+const ADMIN_TOKEN_KEY = "veloAdminToken";
 
 const seedPosts = [
   {
@@ -52,6 +57,7 @@ const postId = document.getElementById("postId");
 const postTitle = document.getElementById("postTitle");
 const postAuthor = document.getElementById("postAuthor");
 const postCategory = document.getElementById("postCategory");
+const postPassword = document.getElementById("postPassword");
 const postBody = document.getElementById("postBody");
 const postImage = document.getElementById("postImage");
 const imagePreviewWrap = document.getElementById("imagePreviewWrap");
@@ -62,6 +68,17 @@ let draftImage = "";
 let draftImageName = "";
 let cachedPosts = null;
 let useRemotePosts = false;
+let migrationPromptShown = false;
+
+function getAdminToken() {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("admin");
+  if (token) {
+    localStorage.setItem(ADMIN_TOKEN_KEY, token);
+    return token;
+  }
+  return localStorage.getItem(ADMIN_TOKEN_KEY) || "";
+}
 
 function getUserKey() {
   const savedKey = localStorage.getItem(USER_KEY);
@@ -91,16 +108,196 @@ function saveLocalPosts(posts) {
   localStorage.setItem(POSTS_KEY, JSON.stringify(posts));
 }
 
+function getRemotePostsCache() {
+  try {
+    const parsedPosts = JSON.parse(localStorage.getItem(REMOTE_POSTS_CACHE_KEY) || "[]");
+    return Array.isArray(parsedPosts) ? parsedPosts : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveRemotePostsCache(posts) {
+  localStorage.setItem(REMOTE_POSTS_CACHE_KEY, JSON.stringify(posts));
+}
+
+function getMigratedLocalPostIds() {
+  try {
+    const parsedIds = JSON.parse(localStorage.getItem(MIGRATED_LOCAL_POSTS_KEY) || "[]");
+    return new Set(Array.isArray(parsedIds) ? parsedIds : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveMigratedLocalPostIds(ids) {
+  localStorage.setItem(MIGRATED_LOCAL_POSTS_KEY, JSON.stringify([...ids]));
+}
+
+function getRemotePostPasswords() {
+  try {
+    const parsedPasswords = JSON.parse(localStorage.getItem(REMOTE_POST_PASSWORDS_KEY) || "{}");
+    return parsedPasswords && typeof parsedPasswords === "object" ? parsedPasswords : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveRemotePostPassword(postId, password) {
+  if (!postId || !password) return;
+  const passwords = getRemotePostPasswords();
+  passwords[postId] = password;
+  localStorage.setItem(REMOTE_POST_PASSWORDS_KEY, JSON.stringify(passwords));
+}
+
+function getRemotePostPassword(postId) {
+  return getRemotePostPasswords()[postId] || "";
+}
+
+function createMigrationPassword(post) {
+  if (window.crypto?.randomUUID) return `restored-${window.crypto.randomUUID()}`;
+  return `restored-${post.id}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function isSeedPost(post) {
+  return post.ownerKey === "seed" || String(post.id || "").startsWith("seed-");
+}
+
+function getMigratableLocalPosts(remotePosts = []) {
+  const migratedIds = getMigratedLocalPostIds();
+  return getLocalPosts().filter((post) => {
+    if (isSeedPost(post) || migratedIds.has(post.id)) return false;
+    return !remotePosts.some((remotePost) =>
+      remotePost.title === post.title &&
+      remotePost.body === post.body &&
+      remotePost.author === post.author
+    );
+  });
+}
+
+async function maybeMigrateLocalPosts(remotePosts = []) {
+  if (migrationPromptShown || !window.VeloApi) return null;
+  const localPosts = getMigratableLocalPosts(remotePosts);
+  if (!localPosts.length) return null;
+
+  migrationPromptShown = true;
+  const migratedIds = getMigratedLocalPostIds();
+  const migratedPosts = [];
+  for (const post of localPosts) {
+    const password = createMigrationPassword(post);
+    const response = await window.VeloApi.createPost({
+      title: post.title,
+      category: post.category,
+      author: post.author,
+      password,
+      body: post.body,
+      image: post.image || "",
+      imageName: post.imageName || "",
+    });
+    if (!response?.ok) break;
+    migratedIds.add(post.id);
+    migratedPosts.push(response.post);
+    saveRemotePostPassword(response.post?.id, password);
+    if (response.unlockState?.maxUnlockedEpisode) rememberUnlockedEpisode(response.unlockState.maxUnlockedEpisode);
+  }
+
+  saveMigratedLocalPostIds(migratedIds);
+  if (!migratedPosts.length) return null;
+  const refreshed = await window.VeloApi.listPosts();
+  if (refreshed?.ok) {
+    useRemotePosts = true;
+    cachedPosts = refreshed.posts || migratedPosts;
+    saveRemotePostsCache(cachedPosts);
+    return cachedPosts;
+  }
+  return [...migratedPosts, ...remotePosts];
+}
+
+function createLocalSalt() {
+  if (window.crypto?.getRandomValues) {
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+    return Array.from(bytes).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+async function hashLocalPassword(password, salt) {
+  const text = `${salt}:${password}`;
+  if (window.crypto?.subtle) {
+    const bytes = new TextEncoder().encode(text);
+    const digest = await window.crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  }
+  return btoa(unescape(encodeURIComponent(text)));
+}
+
+async function createLocalPasswordRecord(password) {
+  const postPasswordSalt = createLocalSalt();
+  return {
+    postPasswordSalt,
+    postPasswordHash: await hashLocalPassword(password, postPasswordSalt),
+  };
+}
+
+async function verifyLocalPostPassword(post, password) {
+  if (!post.postPasswordHash || !post.postPasswordSalt) return post.ownerKey === userKey;
+  return await hashLocalPassword(password, post.postPasswordSalt) === post.postPasswordHash;
+}
+
+function rememberUnlockedEpisode(maxUnlockedEpisode) {
+  const current = Number(localStorage.getItem(FAN_MAX_UNLOCKED_EPISODE_KEY) || 5);
+  const next = Math.max(current, Number(maxUnlockedEpisode || 5));
+  localStorage.setItem(FAN_MAX_UNLOCKED_EPISODE_KEY, String(Math.min(7, next)));
+}
+
+function rememberLocalReviewUnlock(posts) {
+  const reviewCount = getReviewCount(posts);
+  if (reviewCount >= 1) rememberUnlockedEpisode(6);
+}
+
+function getFastPosts() {
+  if (cachedPosts) return cachedPosts;
+  const remoteCache = getRemotePostsCache();
+  if (remoteCache.length) {
+    useRemotePosts = true;
+    cachedPosts = remoteCache;
+    return cachedPosts;
+  }
+
+  useRemotePosts = false;
+  cachedPosts = getLocalPosts();
+  return cachedPosts;
+}
+
 async function loadPosts() {
   if (window.VeloApi) {
     const response = await window.VeloApi.listPosts();
     if (response?.ok) {
+      const migratedPosts = await maybeMigrateLocalPosts(response.posts || []);
+      if (migratedPosts) return migratedPosts;
+
+      const fallbackPosts = cachedPosts || getRemotePostsCache();
+      const localPosts = getLocalPosts();
+      if ((!response.posts || response.posts.length === 0) && fallbackPosts.length > 0) {
+        useRemotePosts = true;
+        cachedPosts = fallbackPosts;
+        return cachedPosts;
+      }
+      if ((!response.posts || response.posts.length === 0) && localPosts.length > 0) {
+        useRemotePosts = false;
+        cachedPosts = localPosts;
+        return cachedPosts;
+      }
+
       useRemotePosts = true;
       cachedPosts = response.posts;
+      saveRemotePostsCache(response.posts);
       return cachedPosts;
     }
   }
 
+  if (cachedPosts) return cachedPosts;
   useRemotePosts = false;
   cachedPosts = getLocalPosts();
   return cachedPosts;
@@ -139,7 +336,7 @@ function setView(viewName) {
 }
 
 async function renderList() {
-  const posts = sortPosts(await loadPosts());
+  const posts = sortPosts(getFastPosts());
   emptyBoard.classList.toggle("hidden", posts.length > 0);
   postList.innerHTML = posts.map((post) => `
     <button class="post-row" type="button" data-id="${escapeHtml(post.id)}">
@@ -152,6 +349,21 @@ async function renderList() {
     </button>
   `).join("");
   setView("list");
+
+  if (!window.VeloApi) return;
+  const remotePosts = sortPosts(await loadPosts());
+  if (listView.classList.contains("hidden")) return;
+  emptyBoard.classList.toggle("hidden", remotePosts.length > 0);
+  postList.innerHTML = remotePosts.map((post) => `
+    <button class="post-row" type="button" data-id="${escapeHtml(post.id)}">
+      <span class="post-title">
+        <b>${escapeHtml(post.title)}</b>
+        <small>${escapeHtml(post.category)}${post.image ? " · 이미지" : ""}</small>
+      </span>
+      <span>${escapeHtml(post.author)}</span>
+      <time>${formatDate(post.createdAt)}</time>
+    </button>
+  `).join("");
 }
 
 function renderDetail(id) {
@@ -161,7 +373,13 @@ function renderDetail(id) {
     return;
   }
 
-  const isOwner = useRemotePosts ? post.ownerKey && post.ownerKey !== "seed" : post.ownerKey === userKey;
+  const canManage = post.ownerKey !== "seed";
+  const adminToken = getAdminToken();
+  const adminActions = useRemotePosts && adminToken ? `
+    <span class="admin-tools-label">관리자 모드</span>
+    <button class="btn btn-ghost danger" type="button" data-action="admin-delete" data-id="${escapeHtml(post.id)}">관리자 삭제</button>
+    <button class="btn btn-ghost danger" type="button" data-action="admin-block" data-id="${escapeHtml(post.id)}">작성자 차단</button>
+  ` : "";
   detailView.innerHTML = `
     <div class="detail-top">
       <button class="back-link" type="button" data-action="list">← 목록으로</button>
@@ -176,10 +394,12 @@ function renderDetail(id) {
     ${post.image ? `<figure class="detail-image"><img src="${post.image}" alt="${escapeHtml(post.imageName || "첨부 이미지")}"></figure>` : ""}
     <div class="detail-body">${escapeHtml(post.body).replaceAll("\n", "<br>")}</div>
     <div class="detail-actions">
-      ${isOwner ? `
+      ${useRemotePosts ? `<button class="btn btn-ghost" type="button" data-action="report" data-id="${escapeHtml(post.id)}">신고</button>` : ""}
+      ${canManage ? `
         <button class="btn btn-ghost" type="button" data-action="edit" data-id="${escapeHtml(post.id)}">수정</button>
         <button class="btn btn-ghost danger" type="button" data-action="delete" data-id="${escapeHtml(post.id)}">삭제</button>
-      ` : `<p>작성한 브라우저에서만 수정/삭제할 수 있습니다.</p>`}
+      ` : `<p>기본 예시 글은 수정/삭제할 수 없습니다.</p>`}
+      ${adminActions}
     </div>
   `;
   setView("detail");
@@ -191,6 +411,8 @@ function resetForm() {
   postTitle.placeholder = "제목을 입력하세요";
   postAuthor.value = localStorage.getItem(NAME_KEY) || "";
   postCategory.value = "자유";
+  postPassword.value = "";
+  postPassword.placeholder = "이 글을 수정하거나 삭제할 때 사용할 비밀번호";
   postBody.value = "";
   postBody.placeholder = "상세 글은 글을 눌렀을 때만 보입니다.";
   postImage.value = "";
@@ -223,9 +445,10 @@ function getReviewCount(posts) {
 function shouldOpenUnlockedEpisode(posts) {
   const pendingEpisode = Number(localStorage.getItem(PENDING_UNLOCK_KEY));
   if (!pendingEpisode) return false;
+  if (pendingEpisode !== 6) return false;
 
   const reviewCount = getReviewCount(posts);
-  return pendingEpisode === 6 ? reviewCount >= 1 : reviewCount >= 2;
+  return reviewCount >= 1;
 }
 
 function openEditForm(id) {
@@ -236,6 +459,8 @@ function openEditForm(id) {
   postTitle.value = post.title;
   postAuthor.value = post.author;
   postCategory.value = post.category;
+  postPassword.value = getRemotePostPassword(post.id);
+  postPassword.placeholder = "작성 시 입력했던 비밀번호";
   postBody.value = post.body;
   postImage.value = "";
   draftImage = post.image || "";
@@ -269,14 +494,18 @@ async function handleSubmit(event) {
     title: postTitle.value.trim(),
     category: postCategory.value,
     author: savedName,
+    password: postPassword.value,
     body: postBody.value.trim(),
     image: draftImage,
     imageName: draftImageName,
   };
 
   if (useRemotePosts) {
+    if (editingId && !payload.password) payload.password = getRemotePostPassword(editingId);
     const response = await saveRemotePost(editingId, payload);
     if (response?.ok) {
+      saveRemotePostPassword(response.post?.id || editingId, payload.password);
+      if (response.unlockState?.maxUnlockedEpisode) rememberUnlockedEpisode(response.unlockState.maxUnlockedEpisode);
       if (payload.category === "감상글" && response.unlockState && shouldOpenRemoteUnlockedEpisode(response.unlockState)) {
         const pendingEpisode = localStorage.getItem(PENDING_UNLOCK_KEY);
         localStorage.removeItem(PENDING_UNLOCK_KEY);
@@ -294,23 +523,34 @@ async function handleSubmit(event) {
 
   const posts = getLocalPosts();
   if (editingId) {
+    const currentPost = posts.find((post) => post.id === editingId);
+    if (!currentPost || !(await verifyLocalPostPassword(currentPost, payload.password))) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     const nextPosts = posts.map((post) => {
-      if (post.id !== editingId || post.ownerKey !== userKey) return post;
+      if (post.id !== editingId) return post;
       return {
         ...post,
         ...payload,
+        password: undefined,
         updatedAt: now
       };
     });
     saveLocalPosts(nextPosts);
     cachedPosts = nextPosts;
+    rememberLocalReviewUnlock(nextPosts);
     renderDetail(editingId);
     return;
   }
 
+  const passwordRecord = await createLocalPasswordRecord(payload.password);
   const newPost = {
     id: `post-${Date.now()}`,
     ...payload,
+    password: undefined,
+    ...passwordRecord,
     ownerKey: userKey,
     createdAt: now,
     updatedAt: now
@@ -319,6 +559,7 @@ async function handleSubmit(event) {
   const nextPosts = [newPost, ...posts];
   saveLocalPosts(nextPosts);
   cachedPosts = nextPosts;
+  rememberLocalReviewUnlock(nextPosts);
   if (newPost.category === "감상글" && shouldOpenUnlockedEpisode(nextPosts)) {
     const pendingEpisode = localStorage.getItem(PENDING_UNLOCK_KEY);
     localStorage.removeItem(PENDING_UNLOCK_KEY);
@@ -347,14 +588,56 @@ document.addEventListener("click", async (event) => {
   if (action === "list") renderList();
   if (action === "write") openWriteForm();
   if (action === "edit") openEditForm(trigger.dataset.id);
+  if (action === "report") {
+    if (!useRemotePosts || !window.VeloApi) return;
+    const reason = prompt("신고 사유를 간단히 적어주세요.", "스팸/도배");
+    if (!reason) return;
+    const response = await window.VeloApi.reportPost(trigger.dataset.id, { reason });
+    alert(response?.ok ? "신고가 접수되었습니다." : response?.message || "신고 접수에 실패했습니다.");
+  }
+  if (action === "admin-delete") {
+    const adminToken = getAdminToken();
+    if (!adminToken || !window.VeloApi) return;
+    const reason = prompt("관리자 삭제 사유를 적어주세요.", "운영 정책 위반");
+    if (!reason) return;
+    const shouldDelete = confirm("관리자 권한으로 이 글을 숨길까요?");
+    if (!shouldDelete) return;
+    const response = await window.VeloApi.adminDeletePost(trigger.dataset.id, adminToken, reason);
+    if (!response?.ok) {
+      alert(response?.message || "관리자 삭제에 실패했습니다.");
+      return;
+    }
+    await renderList();
+  }
+  if (action === "admin-block") {
+    const adminToken = getAdminToken();
+    if (!adminToken || !window.VeloApi) return;
+    const reason = prompt("작성자 차단 사유를 적어주세요.", "도배/악성 게시물");
+    if (!reason) return;
+    const shouldBlock = confirm("작성자를 차단하고 기존 글도 숨길까요?");
+    if (!shouldBlock) return;
+    const response = await window.VeloApi.adminBlockPostAuthor(trigger.dataset.id, adminToken, reason);
+    if (!response?.ok) {
+      alert(response?.message || "작성자 차단에 실패했습니다.");
+      return;
+    }
+    await renderList();
+  }
   if (action === "delete") {
     const post = getCachedPosts().find((candidatePost) => candidatePost.id === trigger.dataset.id);
     if (!post) return;
     const shouldDelete = confirm("이 글을 삭제할까요?");
     if (!shouldDelete) return;
+    const savedPassword = getRemotePostPassword(post.id);
+    const password = savedPassword || prompt("작성 시 입력한 수정/삭제 비밀번호를 입력해주세요.");
+    if (password === null) return;
+    if (!password) {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
 
     if (useRemotePosts && window.VeloApi) {
-      const response = await window.VeloApi.deletePost(post.id);
+      const response = await window.VeloApi.deletePost(post.id, password);
       if (!response?.ok) {
         alert(response?.message || "삭제에 실패했습니다.");
         return;
@@ -363,6 +646,10 @@ document.addEventListener("click", async (event) => {
       return;
     }
 
+    if (!(await verifyLocalPostPassword(post, password))) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
     saveLocalPosts(getLocalPosts().filter((candidatePost) => candidatePost.id !== post.id));
     await renderList();
   }

@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "check": "node --check api/session.js && node --check api/posts.js && node --check api/unlocks.js && node --check api/reactions.js"
+    "check": "node --check analytics.js && node --check api-client.js && node --check admin-metrics.js && node --check script.js && node --check story.js && node --check fan.js && node --check api/session.js && node --check api/posts.js && node --check api/unlocks.js && node --check api/_member-summary.js && node --check api/reactions.js && node --check api/reports.js && node --check api/admin.js && node --check api/metrics.js && node --check api/producer-signup.js && node --check api/_story-summary.js && node --check api/story-bootstrap.js && node --check api/story-views.js && node --check api/story-likes.js && node --check api/live-stats.js"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"

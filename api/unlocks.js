@@ -1,7 +1,7 @@
 const {
   ensureUser,
+  getCachedStoryUnlocks,
   sendJson,
-  syncStoryUnlocks,
 } = require("./_firebase");
 
 module.exports = async function handler(req, res) {
@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const unlockState = await syncStoryUnlocks(firebase.db, userId);
+    const unlockState = await getCachedStoryUnlocks(firebase.db, userId);
     sendJson(res, 200, { ok: true, userId, ...unlockState });
   } catch (error) {
     sendJson(res, 500, { ok: false, message: error.message });
