@@ -61,6 +61,8 @@ const storyViewSyncInFlight = new Set();
 const storyLikeSyncStates = new Map();
 const storyViewLiveProtection = new Map();
 const storyLikeLiveProtection = new Map();
+let episodeStructuredData = null;
+const STORY_BASE_URL = "https://velo-landing-puce.vercel.app/story.html";
 let prologueSections = {};
 let remoteUnlockedEpisode = null;
 let storyBootstrapPending = true;
@@ -89,6 +91,63 @@ function escapeStoryHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
+}
+
+function setMetaContent(selector, content) {
+  const element = document.querySelector(selector);
+  if (element) element.setAttribute("content", content);
+}
+
+function setStoryMetadata(episode = null) {
+  const canonical = document.querySelector('link[rel="canonical"]');
+  const isEpisode = Boolean(episode);
+  const url = isEpisode ? `${STORY_BASE_URL}?episode=${episode.episode}` : STORY_BASE_URL;
+  const title = isEpisode
+    ? `${episode.episode}화 ${episode.title} | V.E.L.O. 오컬트 아이돌 비주얼 노벨`
+    : "V.E.L.O. 스토리 | 오컬트 아이돌 비주얼 노벨";
+  const description = isEpisode
+    ? `V.E.L.O. 오컬트 아이돌 비주얼 노벨 ${episode.episode}화 '${episode.title}'. 유령의 무대에서 다시 데뷔하는 다섯 아이돌의 서사를 읽어보세요.`
+    : "빛을 잃은 다섯 아이돌이 유령의 무대에서 다시 데뷔하는 V.E.L.O. 오컬트 비주얼 노벨 스토리.";
+
+  document.title = title;
+  if (canonical) canonical.href = url;
+  setMetaContent('meta[name="description"]', description);
+  setMetaContent('meta[property="og:title"]', title);
+  setMetaContent('meta[property="og:description"]', description);
+  setMetaContent('meta[property="og:url"]', url);
+  setMetaContent('meta[name="twitter:title"]', title);
+  setMetaContent('meta[name="twitter:description"]', description);
+
+  if (!isEpisode) {
+    episodeStructuredData?.remove();
+    episodeStructuredData = null;
+    return;
+  }
+
+  if (!episodeStructuredData) {
+    episodeStructuredData = document.createElement("script");
+    episodeStructuredData.id = "episodeStructuredData";
+    episodeStructuredData.type = "application/ld+json";
+    document.head.appendChild(episodeStructuredData);
+  }
+  episodeStructuredData.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Chapter",
+    "@id": `${url}#chapter`,
+    url,
+    name: `${episode.episode}화. ${episode.title}`,
+    position: episode.episode,
+    inLanguage: "ko-KR",
+    isPartOf: {
+      "@type": "CreativeWorkSeries",
+      "@id": `${STORY_BASE_URL}#series`,
+      name: "V.E.L.O. 오컬트 아이돌 비주얼 노벨",
+      url: STORY_BASE_URL,
+    },
+    about: {
+      "@id": "https://velo-landing-puce.vercel.app/#game",
+    },
+  });
 }
 
 function getStoryUserKey() {
@@ -256,6 +315,7 @@ function renderBlock(block) {
 
 function renderEpisodeList() {
   const unlockedEpisode = getUnlockedEpisode();
+  setStoryMetadata();
   novelReader.classList.add("hidden");
   episodeList.classList.remove("hidden");
   episodeList.innerHTML = EPISODES.map((episode) => {
@@ -288,6 +348,7 @@ function renderReader(episodeNumber, { trackView = true } = {}) {
     return;
   }
 
+  setStoryMetadata(episode);
   const blocks = getEpisodeContent(episode);
   const previousEpisode = EPISODES.find((candidate) => candidate.episode === episode.episode - 1);
   const nextEpisode = EPISODES.find((candidate) => candidate.episode === episode.episode + 1);
