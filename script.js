@@ -309,13 +309,12 @@ function renderDevLog() {
 function renderFooterSns() {
   const icons = {
     X: '<path d="M4 4l16 16M20 4L4 20" stroke-width="2"/>',
-    Instagram: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17" cy="7" r="1.2" fill="currentColor"/>',
-    YouTube: '<rect x="3" y="6" width="18" height="12" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/>',
   };
+  const links = { X: "https://x.com/itsveloofficial" };
   const footSns = document.getElementById("footSns");
   if (!footSns) return;
   footSns.innerHTML = Object.entries(icons).map(([name, path]) =>
-    `<a class="sns" href="#" aria-label="${name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${path}</svg></a>`
+    `<a class="sns" href="${links[name]}" target="_blank" rel="noopener noreferrer" aria-label="${name}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">${path}</svg></a>`
   ).join("");
 }
 
