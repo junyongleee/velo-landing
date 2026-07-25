@@ -11,6 +11,11 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://velo-landing-puce.vercel.app/about.html</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://velo-landing-puce.vercel.app/story.html?episode=0</loc>
     <lastmod>2026-07-25</lastmod>
   </url>
